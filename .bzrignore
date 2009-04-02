@@ -1,7 +1,7 @@
+lib/evasion_deviceaccess.egg-info
 temp/
 *.cfg
 *.ini
 dist
-lib/newman_devicelayer.egg-info/
 build
 *.egg
