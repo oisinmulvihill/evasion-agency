@@ -1,0 +1,7 @@
+temp/
+*.cfg
+*.ini
+dist
+lib/newman_devicelayer.egg-info/
+build
+*.egg

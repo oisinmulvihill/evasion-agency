@@ -1,0 +1,14 @@
+#
+# Template Device Layer configuration file.
+#
+# Oisin Mulvihill
+# 2008-12-23
+#
+
+[testswipe]
+dev_class = swipe
+driver = testing.swipe
+alias = 1
+interface = 127.0.0.1
+port = 8810
+
