@@ -30,7 +30,8 @@ needed = [
     'configobj',
     'twisted', 
     'pydispatcher',
-    'messenger',
+    
+    'evasion-messenger',
 ]
 
 # Include everything under deviceaccess. I needed to add a __init__.py
