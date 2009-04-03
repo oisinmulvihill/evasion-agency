@@ -70,7 +70,7 @@ class deviceaccessTest(unittest.TestCase):
         # first card swipe
         alias = 1
         dev_class = 'swipe'
-        driver = 'testing.fake'
+        driver = 'deviceaccess.drivers.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
@@ -78,7 +78,7 @@ class deviceaccessTest(unittest.TestCase):
         # second card swipe
         alias = 2
         dev_class = 'swipe'
-        driver = 'testing.fake'
+        driver = 'deviceaccess.drivers.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
@@ -86,7 +86,7 @@ class deviceaccessTest(unittest.TestCase):
         # first printer
         alias = 1
         dev_class = 'printer'
-        driver = 'testing.fake'
+        driver = 'deviceaccess.drivers.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
@@ -162,7 +162,7 @@ class deviceaccessTest(unittest.TestCase):
         c.node = '/dev/swipe/testing/1'
         c.alias = '/dev/swipe/1'
         c.dev_class = 'swipe'
-        c.driver = 'testing.swipe'
+        c.driver = 'devicaccess.drivers.testing.swipe'
         c.name = 'testingswipe'
         
         # This should not now raise ConfigError.
@@ -177,7 +177,7 @@ class deviceaccessTest(unittest.TestCase):
         [testswipe]
         alias = 1
         dev_class = 'swipe'
-        driver = 'testing.swipe'
+        driver = 'deviceaccess.drivers.testing.swipe'
         interface = 127.0.0.1
         port = 8810
         
@@ -192,9 +192,6 @@ class deviceaccessTest(unittest.TestCase):
         self.assertEquals(dev1.node, '/dev/swipe/testswipe/1')        
         self.assertEquals(dev1.name, 'testswipe')        
                 
-        import deviceaccess.drivers.testing.swipe as swipe
-        self.assertEquals(dev1.driver, swipe.Device)
-
         self.assertEquals(dev1.interface, '127.0.0.1')        
         self.assertEquals(dev1.port, '8810')        
 
@@ -206,7 +203,7 @@ class deviceaccessTest(unittest.TestCase):
         [testswipe]
         alias = 1
         dev_class = 'swipe12'           # unknow dev_class
-        driver = 'testing.swipe'
+        driver = 'deviceaccess.drivers.testing.swipe'
         interface = 127.0.0.1
         port = 8810
         
@@ -219,13 +216,12 @@ class deviceaccessTest(unittest.TestCase):
         [testswipe]
         alias = 1
         dev_class = 'swipe'           
-        driver = 'testing.doesnotexits'     # unknown driver module
+        driver = 'deviceaccess.drivers.testing.doesnotexits'     # unknown driver module
         interface = 127.0.0.1
         port = 8810
         
         """
-
-        self.assertRaises(deviceaccess.ConfigError, deviceaccess.config.load, test_config)
+        self.assertRaises(ImportError, deviceaccess.config.load, test_config)
 
         # test duplicated aliases i.e. the two same dev_class entries have been
         # given the same alias
@@ -233,14 +229,14 @@ class deviceaccessTest(unittest.TestCase):
         [testswipe]
         alias = 1                    # first alias: OK
         dev_class = 'swipe'           
-        driver = 'testing.swipe'
+        driver = 'deviceaccess.drivers.testing.swipe'
         interface = 127.0.0.1
         port = 8810
 
         [magtek]
         alias = 1                   # Duplicate alias!
         dev_class = 'swipe'           
-        driver = 'testing.fake'     
+        driver = 'deviceaccess.drivers.testing.fake'     
         
         """
 

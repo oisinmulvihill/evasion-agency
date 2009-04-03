@@ -91,28 +91,26 @@ def load(config, check=None):
             raise ConfigError("The class '%s' is not known. It might need adding to '%s'." % (key, deviceaccess.DEVICE_CLASSES))
             
         elif key == 'driver':
-            driver = 'deviceaccess.drivers.%s' % section[key]
-            try:
-                toplevel = __import__(driver)
+            def recover_driver():
+                # default: nothing found.
+                returned = None
                 
-                # Recover just the device class from a path 
-                # of 'deviceaccess.drivers..etc.Device'
-                imports = []
-                imports.extend(section[key].split('.'))
-                imports.append('Device')
-                current = getattr(toplevel, 'drivers')
-                for item in imports:
-                    try:
-                        current = getattr(current, item)
-                    except AttributeError, e:
-                        #get_log().exception("load: I was unable to import '%s' from '%s'. Reason - " % (item, current))
-                        raise ConfigError("I was unable to import '%s' from '%s'." % (item, current))
-                value = current
-                
-            except ImportError, e:
-                raise ConfigError("The driver '%s' was not found! %s" % (driver,traceback.format_exc()))
-                
-            
+                # Check I can at least import the stated module.
+                try:
+                    imported_driver = __import__(section[key], fromlist=section[key].split('.'))
+                except ImportError, e:
+                     raise ImportError("The driver '%s' was not found! %s" % (section[key], traceback.format_exc()))                        
+
+                # Now see if it contains a Device class all driver must have to load:
+                if hasattr(imported_driver, 'Device'):
+                    returned = getattr(imported_driver, 'Device')
+                    
+                return returned
+
+            value = recover_driver()
+            if not value:
+                raise ConfigError("I was unable to import '%s' from '%s'." % (item, current))
+                        
         setattr(c, key, value)
         processed[section.name] = c
         

@@ -72,6 +72,7 @@ DEVICE_CLASSES = {
     'sale' : 'This is the class for point of sale devices fit under to process card/chip and pin payments.', 
     'swipe' : 'This is the class for magnetic card swipe devices.',
     'websale' : 'This is the class for web-based sale devices.',
+    'service' : 'This represent some web or other type of networked service',
 }
 
 
