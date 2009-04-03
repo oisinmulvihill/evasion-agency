@@ -97,7 +97,8 @@ def load(config, check=None):
                 
                 # Check I can at least import the stated module.
                 try:
-                    imported_driver = __import__(section[key], fromlist=section[key].split('.'))
+                    # absolute imports only:
+                    imported_driver = __import__(section[key], fromlist=section[key].split('.'), level=0)
                 except ImportError, e:
                      raise ImportError("The driver '%s' was not found! %s" % (section[key], traceback.format_exc()))                        
 
