@@ -28,11 +28,14 @@ TestSuite = 'deviceaccess.tests'
 
 needed = [
     'configobj',
-    'twisted', 
     'pydispatcher',
-    
     'evasion-messenger',
 ]
+
+import sys
+if not sys.platform.startswith('win'):
+    needed.append('twisted')
+    
 
 # Include everything under deviceaccess. I needed to add a __init__.py
 # to each directory inside deviceaccess I did this using the following
