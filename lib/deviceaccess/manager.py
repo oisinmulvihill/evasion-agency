@@ -8,7 +8,9 @@ Oisin Mulvihill
 
 
 """
+import sys
 import logging
+import traceback
 
 import deviceaccess
 
@@ -19,7 +21,7 @@ def get_log():
 
 # Set to True to prevent the manager form catching exceptions
 # in its methods.
-TESTING=False
+TESTING=True
 
 
 class ManagerError(Exception):
@@ -110,6 +112,14 @@ class Manager(object):
         return loaded_devices
 
 
+    def formatError(self):
+        """Return a string representing the last traceback.
+        """
+        exception, instance, tb = traceback.sys.exc_info()
+        error = "".join(traceback.format_tb(tb))      
+        return error
+
+
     def setUp(self):
         """Called to initialise all devices in our care.
         
@@ -125,6 +135,7 @@ class Manager(object):
                 dev.device.setUp(dev.config)
             except:
                 self.log.exception("%s setUp error: " % dev)
+                sys.stderr.write("%s setUp error: %s" % (dev, self.formatError()))
                 if TESTING:
                     raise
 
@@ -147,6 +158,7 @@ class Manager(object):
                 dev.device.tearDown()
             except:
                 self.log.exception("%s tearDown error: " % dev)
+                sys.stderr.write("%s tearDown error: %s" % (dev, self.formatError()))
                 if TESTING:
                     raise
 
@@ -166,6 +178,7 @@ class Manager(object):
                 dev.device.start()
             except:
                 self.log.exception("%s start error: " % dev)
+                sys.stderr.write("%s start error: %s" % (dev, self.formatError()))
                 if TESTING:
                     raise
 
@@ -185,6 +198,7 @@ class Manager(object):
                 dev.device.stop()
             except:
                 self.log.exception("%s stop error: " % dev)
+                sys.stderr.write("%s stop error: %s" % (dev, self.formatError()))
                 if TESTING:
                     raise
         

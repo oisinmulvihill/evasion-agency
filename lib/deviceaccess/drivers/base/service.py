@@ -5,8 +5,8 @@ import thread
 import logging
 import datetime
 import xmlrpclib
+import SocketServer
 import SimpleXMLRPCServer
-
 
 from pydispatch import dispatcher
 
@@ -18,43 +18,6 @@ from deviceaccess.drivers import base
 from messenger import xulcontrolprotocol        
 
 
-class StoppableXMLRPCServer(SimpleXMLRPCServer.SimpleXMLRPCServer):
-    """Handle requests but check for the exit flag setting periodically.
-    
-    This snippet is based example from:
-    
-        http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/425210
-    
-    """
-    log = logging.getLogger('deviceaccess.base.service.StoppableXMLRPCServer')
-
-    exitTime = False
-    
-    allow_reuse_address = True
-
-    def stop(self):
-        self.exitTime = True
-        self.log.info("Stop: set exit flag and closed port.")
-
-    def server_bind(self):
-        SimpleXMLRPCServer.SimpleXMLRPCServer.server_bind(self)
-        self.socket.settimeout(1)
-        self.run = True
-        
-    def get_request(self):
-        """Handle a request/timeout and check the exit flag.
-        """
-        while not self.exitTime:
-            try:
-                returned = self.socket.accept()
-                if len(returned) > 1:
-                    conn, address = returned
-                    conn.settimeout(None)
-                    returned = (conn, address)
-                return returned
-            except socket.timeout:
-                pass
-
 
 class ControlFrameRequest(SocketServer.StreamRequestHandler):
     """Handle a viewpoint control frame request.
@@ -65,7 +28,7 @@ class ControlFrameRequest(SocketServer.StreamRequestHandler):
         """
         
 
-class StoppableTCPServer(SocketServer.ThreadingTCPServer):
+class StoppableTCPServer(SocketServer.TCPServer):
     """Handle requests but check for the exit flag setting periodically.    
     """
     log = logging.getLogger('deviceaccess.base.service.StoppableTCPServer')
@@ -74,15 +37,15 @@ class StoppableTCPServer(SocketServer.ThreadingTCPServer):
     
     allow_reuse_address = True
 
-    def __init__(self, serveraddress):
-        super(StoppableTCPServer, self).__init__(serveraddress, ControlFrameRequest)
+    def __init__(self, serveraddress, ControlFrameRequest):
+        SocketServer.TCPServer.__init__(self, serveraddress, ControlFrameRequest)
 
     def stop(self):
         self.exitTime = True
         self.log.info("Stop: set exit flag and closed port.")
 
     def server_bind(self):
-        super(StoppableTCPServer, self).server_bind(self)
+        SocketServer.TCPServer.server_bind(self)
         self.socket.settimeout(1)
         self.run = True
         
@@ -131,7 +94,13 @@ class FakeViewpointDevice(device.Base):
         the start() method is called.
         """
         self.config = config
-        #self.server = xmlrpcserver.StoppableXMLRPCServer((config.get('interface'), int(config.get('port'))))
+        interface = config.get('interface')
+        port = int(config.get('port'))
+        request_handler = self.registerRequestHandler()
+        self.server = StoppableTCPServer(
+            (interface, port),
+            request_handler
+        )
 
 
     def tearDown(self):
@@ -146,8 +115,7 @@ class FakeViewpointDevice(device.Base):
         def _start(data=0):
             i = self.config.get('interface')
             p = self.config.get('port')
-            d = self.config.get('description')
-            self.log.info("%s XML-RPC Service URI 'http://%s:%s'" % (self.i,p))
+            self.log.info("Fake Viewpoint Service '%s:%s'" % (i,p))
             try:
                 self.server.serve_forever()
             except TypeError,e:
@@ -162,6 +130,45 @@ class FakeViewpointDevice(device.Base):
         """
         if self.server:
             self.server.stop()
+
+
+
+class StoppableXMLRPCServer(SimpleXMLRPCServer.SimpleXMLRPCServer):
+    """Handle requests but check for the exit flag setting periodically.
+    
+    This snippet is based example from:
+    
+        http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/425210
+    
+    """
+    log = logging.getLogger('deviceaccess.base.service.StoppableXMLRPCServer')
+
+    exitTime = False
+    
+    allow_reuse_address = True
+
+    def stop(self):
+        self.exitTime = True
+        self.log.info("Stop: set exit flag and closed port.")
+
+    def server_bind(self):
+        SimpleXMLRPCServer.SimpleXMLRPCServer.server_bind(self)
+        self.socket.settimeout(1)
+        self.run = True
+        
+    def get_request(self):
+        """Handle a request/timeout and check the exit flag.
+        """
+        while not self.exitTime:
+            try:
+                returned = self.socket.accept()
+                if len(returned) > 1:
+                    conn, address = returned
+                    conn.settimeout(None)
+                    returned = (conn, address)
+                return returned
+            except socket.timeout:
+                pass
 
 
 
@@ -212,7 +219,13 @@ class ServiceDevice(device.Base):
         the start() method is called.
         """
         self.config = config
-        self.server = xmlrpcserver.StoppableXMLRPCServer((config.get('interface'), int(config.get('port'))))
+        interface = config.get('interface')
+        port = int(config.get('port'))
+        try:
+            self.server = StoppableXMLRPCServer((interface, port))
+        except Exception, e:
+            print "HERE: %s" % str(e)
+            
         self.server.register_instance(self.registerInterface())
 
 
@@ -228,8 +241,7 @@ class ServiceDevice(device.Base):
         def _start(data=0):
             i = self.config.get('interface')
             p = self.config.get('port')
-            d = self.config.get('description')
-            self.log.info("%s XML-RPC Service URI 'http://%s:%s'" % (self.i,p))
+            self.log.info("XML-RPC Service URI 'http://%s:%s'" % (i,p))
             try:
                 self.server.serve_forever()
             except TypeError,e:
