@@ -17,7 +17,7 @@ parent=
 
 [handler_default]
 class=handlers.RotatingFileHandler
-args=("general.log", "au", 10 * 1024 * 1024, 10)
+args=("${log_dir}/deviceaccess.log", "au", 10 * 1024 * 1024, 2)
 level=DEBUG
 formatter=default
 

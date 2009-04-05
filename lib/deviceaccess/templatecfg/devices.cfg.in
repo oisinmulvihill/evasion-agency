@@ -2,13 +2,12 @@
 # Template Device Layer configuration file.
 #
 # Oisin Mulvihill
-# 2008-12-23
+# 2009-04-05
 #
 
-[testswipe]
-dev_class = swipe
-driver = testing.swipe
+[crossbow]
+dev_class = service
+driver = fdsdrivers.crossbow
 alias = 1
 interface = 127.0.0.1
 port = 8810
-
