@@ -27,6 +27,7 @@ fd.close()
 TestSuite = 'deviceaccess.tests'
 
 needed = [
+    'Mako'
     'configobj',
     'pydispatcher',
     'evasion-messenger',

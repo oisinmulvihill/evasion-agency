@@ -145,24 +145,25 @@ DEFAULT_CONFIG_NAME = "devices.cfg"
 DEFAULT_MANAGER_CONFIG_NAME = "manager.cfg"
 DEFAULT_LOGCONFIG_NAME = "manager-log.cfg"
 
-def create_config():
+def create_config(cfg_data):
     """Create the default director.ini in the current directory based
     on a the template stored in director.templatecfg
     """
     import deviceaccess
     import deviceaccess.templatecfg
+    from mako.template import Template
     from pkg_resources import resource_string
 
     print("Creating initial configuration: '%s', '%s' and '%s'." % (DEFAULT_CONFIG_NAME, DEFAULT_MANAGER_CONFIG_NAME, DEFAULT_LOGCONFIG_NAME))
 
     # Recover the template file we will fill out with the path information:
-    cfg_data = resource_string(deviceaccess.templatecfg.__name__, 'devices.cfg.in')
+    dcfg_data = resource_string(deviceaccess.templatecfg.__name__, 'devices.cfg.in')
     mcfg_data = resource_string(deviceaccess.templatecfg.__name__, 'manager.cfg.in')
     logcfg_data = resource_string(deviceaccess.templatecfg.__name__, 'log.cfg.in')
 
     # Ok, write the result out to disk:
     fd = open(DEFAULT_CONFIG_NAME, 'w')
-    fd.write(cfg_data)
+    fd.write(dcfg_data)
     fd.close()
     
     fd = open(DEFAULT_MANAGER_CONFIG_NAME, 'w')
@@ -170,7 +171,7 @@ def create_config():
     fd.close()
     
     fd = open(DEFAULT_LOGCONFIG_NAME, 'w')
-    fd.write(logcfg_data)
+    fd.write(Template(logcfg_data).render(**cfg_data))
     fd.close()
 
     print("Success, '%s', '%s' and '%s' created ok." % (DEFAULT_CONFIG_NAME, DEFAULT_MANAGER_CONFIG_NAME, DEFAULT_LOGCONFIG_NAME))
@@ -180,6 +181,8 @@ def main():
     """Main program for commandline non-service manager.
     """
     parser = OptionParser()
+    parser.add_option("--logdir", action="store", dest="logdir", default=".",
+                      help="Where log file goes in template log.")
     parser.add_option("--logconfig", action="store", dest="logconfig_filename", default="log.cfg",
                       help="This is the logging config file.")
     parser.add_option("--config", action="store", dest="config_filename", default="devices.cfg",
@@ -191,7 +194,12 @@ def main():
     (options, args) = parser.parse_args()
 
     if options.create_config:
-        create_config()
+        create_config(dict(
+            log_dir=options.logdir,
+            logconfig=options.logconfig_filename,
+            config=options.config_filename,
+            dmconfig=options.manager_config,
+        ))
     else:
         setup(
             logconfig=options.logconfig_filename,
