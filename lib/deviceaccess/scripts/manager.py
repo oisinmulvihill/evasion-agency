@@ -143,7 +143,7 @@ def run(app=appmain):
 #
 DEFAULT_CONFIG_NAME = "devices.cfg"
 DEFAULT_MANAGER_CONFIG_NAME = "manager.cfg"
-DEFAULT_LOGCONFIG_NAME = "log.cfg"
+DEFAULT_LOGCONFIG_NAME = "manager-log.cfg"
 
 def create_config():
     """Create the default director.ini in the current directory based
