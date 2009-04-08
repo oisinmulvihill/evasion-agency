@@ -133,7 +133,7 @@ class FakeViewpointDevice(device.Base):
 
 
 
-class StoppableXMLRPCServer(SimpleXMLRPCServer.SimpleXMLRPCServer):
+class StoppableXMLRPCServer(SocketServer.ThreadingMixIn, SimpleXMLRPCServer.SimpleXMLRPCServer):
     """Handle requests but check for the exit flag setting periodically.
     
     This snippet is based example from:
