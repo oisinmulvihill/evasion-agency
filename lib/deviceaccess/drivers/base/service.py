@@ -221,10 +221,25 @@ class ServiceDevice(device.Base):
         self.config = config
         interface = config.get('interface')
         port = int(config.get('port'))
-        try:
-            self.server = StoppableXMLRPCServer((interface, port))
-        except Exception, e:
-            print "HERE: %s" % str(e)
+        while True:
+            try:
+                self.log.info("Creating service...")
+                self.server = StoppableXMLRPCServer((interface, port))
+                
+            except socket.error, e:
+                if e[0] == 48 or e[1] == 'Address already in use':
+                    self.log.error("Address (%s, %s) in use. Retrying..." % (interface, port))
+                    pass
+            
+            except Exception, e:
+                self.log.exception("Service creation failed - ")
+                break
+                
+            else:
+                self.log.info("Service created OK.")
+                break
+                
+            time.sleep(1)
             
         self.server.register_instance(self.registerInterface())
 
