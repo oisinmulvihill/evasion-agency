@@ -7,6 +7,5 @@ Oisin Mulvihill
 
 """
 import fake
-import swipe
 
 

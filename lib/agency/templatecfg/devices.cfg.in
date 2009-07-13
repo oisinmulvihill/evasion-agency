@@ -7,7 +7,7 @@
 
 [test]
 dev_class = service
-driver = testing.fake
+driver = agency.drivers.testing.fake
 alias = 1
 interface = 127.0.0.1
 port = 8810
