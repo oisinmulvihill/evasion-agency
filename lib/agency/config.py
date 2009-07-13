@@ -7,11 +7,11 @@ import StringIO
 
 import configobj
 
-import deviceaccess
+import agency
 import traceback
 
 def get_log():
-    return logging.getLogger('deviceaccess.config')
+    return logging.getLogger('agency.config')
 
 
 class ConfigError(Exception):
@@ -87,8 +87,8 @@ def load(config, check=None):
         if not c.config:
             c.config = section
             
-        if key == 'dev_class' and value not in deviceaccess.DEVICE_CLASSES:
-            raise ConfigError("The class '%s' is not known. It might need adding to '%s'." % (key, deviceaccess.DEVICE_CLASSES))
+        if key == 'dev_class' and value not in agency.DEVICE_CLASSES:
+            raise ConfigError("The class '%s' is not known. It might need adding to '%s'." % (key, agency.DEVICE_CLASSES))
             
         elif key == 'driver':
             def recover_driver():
@@ -122,7 +122,7 @@ def load(config, check=None):
     alias_check = {}
     def update_and_check(c):
         c.check()
-        c.node, c.alias = deviceaccess.node.add(c.dev_class, c.name, c.alias)
+        c.node, c.alias = agency.node.add(c.dev_class, c.name, c.alias)
         if alias_check.get(c.alias, 0):
             bad = c.alias.split('/')[-1]
             raise ConfigError("A duplicate config alias '%s' has been found for configuration '%s'" % (bad, c.name))

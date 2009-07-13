@@ -12,9 +12,9 @@ from pydispatch import dispatcher
 
 
 import messenger
-from deviceaccess import device
+from agency import device
 from director import viewpointdirect
-from deviceaccess.drivers import base
+from agency.drivers import base
 from messenger import xulcontrolprotocol        
 
 
@@ -31,7 +31,7 @@ class ControlFrameRequest(SocketServer.StreamRequestHandler):
 class StoppableTCPServer(SocketServer.TCPServer):
     """Handle requests but check for the exit flag setting periodically.    
     """
-    log = logging.getLogger('deviceaccess.base.service.StoppableTCPServer')
+    log = logging.getLogger('agency.base.service.StoppableTCPServer')
 
     exitTime = False
     
@@ -77,7 +77,7 @@ class FakeViewpointDevice(device.Base):
         port = 7055
                     
     """
-    log = logging.getLogger('deviceaccess.base.service.FakeViewpointDevice')
+    log = logging.getLogger('agency.base.service.FakeViewpointDevice')
     
     def __init__(self):
         self.config = None
@@ -141,7 +141,7 @@ class StoppableXMLRPCServer(SocketServer.ThreadingMixIn, SimpleXMLRPCServer.Simp
         http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/425210
     
     """
-    log = logging.getLogger('deviceaccess.base.service.StoppableXMLRPCServer')
+    log = logging.getLogger('agency.base.service.StoppableXMLRPCServer')
 
     exitTime = False
     
@@ -190,7 +190,7 @@ class ServiceDevice(device.Base):
         'http://interface:port/'
                     
     """
-    log = logging.getLogger('deviceaccess.base.service.ServiceDevice')
+    log = logging.getLogger('agency.base.service.ServiceDevice')
     
     def __init__(self):
         self.config = None

@@ -78,7 +78,7 @@ DEVICE_CLASSES = {
 
 class Nodes(object):
     """This class manages the node and alias id string generation, based 
-    on the device class currently found in deviceaccess.DEVICE_CLASSES.
+    on the device class currently found in agency.DEVICE_CLASSES.
     
     """
     def __init__(self):
@@ -98,7 +98,7 @@ class Nodes(object):
         from the config file.
         
         dev_class:
-            This must be a string as found in deviceaccess.DEVICE_CLASSES.
+            This must be a string as found in agency.DEVICE_CLASSES.
             If not the ValueError will be raised.
         
         class_name:
@@ -107,7 +107,7 @@ class Nodes(object):
         
         alias:
             This is the user specific id recovered from the config file.
-            The deviceaccess manager must make sure these are unique.
+            The agency manager must make sure these are unique.
             
         returned:
             (node_id, alias_id)
@@ -140,7 +140,7 @@ class Nodes(object):
         """Called to return the current count for the allocated node ids.
         
         dev_class:
-            This must be a string as found in deviceaccess.DEVICE_CLASSES.
+            This must be a string as found in agency.DEVICE_CLASSES.
             If not the ValueError will be raised.
 
         returned:

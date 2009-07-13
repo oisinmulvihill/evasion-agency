@@ -5,9 +5,9 @@
 # 2009-04-05
 #
 
-[crossbow]
+[test]
 dev_class = service
-driver = fdsdrivers.crossbow
+driver = testing.fake
 alias = 1
 interface = 127.0.0.1
 port = 8810

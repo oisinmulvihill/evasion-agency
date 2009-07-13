@@ -3,8 +3,8 @@
 import unittest
 
 
-import deviceaccess
-import deviceaccess.config as config
+import agency
+import agency.config as config
 
 
 class TestDevice(object):
@@ -33,14 +33,14 @@ class TestDevice(object):
         self.queryCalled = True
 
 
-class deviceaccessTest(unittest.TestCase):
+class agencyTest(unittest.TestCase):
 
     def setUp(self):
         # unittesting reset:
-        deviceaccess.node._reset()
+        agency.node._reset()
 
         # unittesting reset:
-        deviceaccess.manager.shutdown()
+        agency.manager.shutdown()
 
 #    def testABC(self):
 #        self.assertEquals(1,0,"buildbot email test")
@@ -48,16 +48,16 @@ class deviceaccessTest(unittest.TestCase):
     def testmanager(self):
         """Test the Manager class.
         """
-        self.assertEquals(deviceaccess.manager.devices, 0)
+        self.assertEquals(agency.manager.devices, 0)
 
         # Make sure you can't call the following without calling load:
-        self.assertRaises(deviceaccess.ManagerError, deviceaccess.manager.tearDown)
-        self.assertRaises(deviceaccess.ManagerError, deviceaccess.manager.setUp)
-        self.assertRaises(deviceaccess.ManagerError, deviceaccess.manager.start)
-        self.assertRaises(deviceaccess.ManagerError, deviceaccess.manager.stop)
+        self.assertRaises(agency.ManagerError, agency.manager.tearDown)
+        self.assertRaises(agency.ManagerError, agency.manager.setUp)
+        self.assertRaises(agency.ManagerError, agency.manager.start)
+        self.assertRaises(agency.ManagerError, agency.manager.stop)
 
         # shutdown should be ok though:
-        deviceaccess.manager.shutdown()
+        agency.manager.shutdown()
 
         
         td1 = TestDevice()
@@ -70,7 +70,7 @@ class deviceaccessTest(unittest.TestCase):
         # first card swipe
         alias = 1
         dev_class = 'swipe'
-        driver = 'deviceaccess.drivers.testing.fake'
+        driver = 'agency.drivers.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
@@ -78,7 +78,7 @@ class deviceaccessTest(unittest.TestCase):
         # second card swipe
         alias = 2
         dev_class = 'swipe'
-        driver = 'deviceaccess.drivers.testing.fake'
+        driver = 'agency.drivers.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
@@ -86,67 +86,67 @@ class deviceaccessTest(unittest.TestCase):
         # first printer
         alias = 1
         dev_class = 'printer'
-        driver = 'deviceaccess.drivers.testing.fake'
+        driver = 'agency.drivers.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
         """
 
-        devices = deviceaccess.manager.load(test_config)
+        devices = agency.manager.load(test_config)
         self.assertEquals(len(devices), 3)
         
-        dev1 = deviceaccess.manager.dev('swipe/1')
+        dev1 = agency.manager.dev('swipe/1')
         self.assertEquals(dev1.node, '/dev/swipe/testswipe/1')
         dev1.device.setParent(td1)
 
-        dev2 = deviceaccess.manager.dev('swipe/2')
+        dev2 = agency.manager.dev('swipe/2')
         self.assertEquals(dev2.node, '/dev/swipe/magtekusbhid/2')
         dev2.device.setParent(td2)
 
-        dev3 = deviceaccess.manager.dev('printer/1')
+        dev3 = agency.manager.dev('printer/1')
         self.assertEquals(dev3.node, '/dev/printer/tsp700/1')
         dev3.device.setParent(td3)
 
         # Call all the methods and check that the individual
         # device methods have also been called:
-        deviceaccess.manager.setUp()
+        agency.manager.setUp()
         self.assertEquals(td1.setUpCalled, True)
         self.assertEquals(td2.setUpCalled, True)
         self.assertEquals(td3.setUpCalled, True)
 
-        deviceaccess.manager.start()
+        agency.manager.start()
         self.assertEquals(td1.startCalled, True)
         self.assertEquals(td2.startCalled, True)
         self.assertEquals(td3.startCalled, True)
 
-        deviceaccess.manager.stop()
+        agency.manager.stop()
         self.assertEquals(td1.stopCalled, True)
         self.assertEquals(td2.stopCalled, True)
         self.assertEquals(td3.stopCalled, True)
 
-        deviceaccess.manager.tearDown()
+        agency.manager.tearDown()
         self.assertEquals(td1.tearDownCalled, True)
         self.assertEquals(td2.tearDownCalled, True)
         self.assertEquals(td3.tearDownCalled, True)
 
 
-    def testdeviceaccessNodes(self):
+    def testagencyNodes(self):
         """Test the device node id generation.
         """
         
         # check that all the device nodes have no entries:
-        for dev_class in deviceaccess.DEVICE_CLASSES:
-            count = deviceaccess.node.get(dev_class)
+        for dev_class in agency.DEVICE_CLASSES:
+            count = agency.node.get(dev_class)
             self.assertEquals(count, 0)
 
-        self.assertRaises(ValueError, deviceaccess.node.add, 'unknown dev class', 'testing' ,'1')
+        self.assertRaises(ValueError, agency.node.add, 'unknown dev class', 'testing' ,'1')
 
         # test generation of new ids
-        node_id, alias_id = deviceaccess.node.add('swipe', 'testing', '12')
+        node_id, alias_id = agency.node.add('swipe', 'testing', '12')
         self.assertEquals(node_id, '/dev/swipe/testing/1')
         self.assertEquals(alias_id, '/dev/swipe/12')
 
-        node_id, alias_id = deviceaccess.node.add('swipe', 'testing', '23')
+        node_id, alias_id = agency.node.add('swipe', 'testing', '23')
         self.assertEquals(node_id, '/dev/swipe/testing/2')
         self.assertEquals(alias_id, '/dev/swipe/23')
 
@@ -177,7 +177,7 @@ class deviceaccessTest(unittest.TestCase):
         [testswipe]
         alias = 1
         dev_class = 'swipe'
-        driver = 'deviceaccess.drivers.testing.swipe'
+        driver = 'agency.drivers.testing.swipe'
         interface = 127.0.0.1
         port = 8810
         
@@ -185,7 +185,7 @@ class deviceaccessTest(unittest.TestCase):
         def check(node, alias):
             pass
          
-        devices = deviceaccess.config.load(test_config, check)
+        devices = agency.config.load(test_config, check)
         dev1 = devices[0]
         
         self.assertEquals(dev1.alias, '/dev/swipe/1')
@@ -203,25 +203,25 @@ class deviceaccessTest(unittest.TestCase):
         [testswipe]
         alias = 1
         dev_class = 'swipe12'           # unknow dev_class
-        driver = 'deviceaccess.drivers.testing.swipe'
+        driver = 'agency.drivers.testing.swipe'
         interface = 127.0.0.1
         port = 8810
         
         """
 
-        self.assertRaises(deviceaccess.ConfigError, deviceaccess.config.load, test_config)
+        self.assertRaises(agency.ConfigError, agency.config.load, test_config)
 
 
         test_config = """
         [testswipe]
         alias = 1
         dev_class = 'swipe'           
-        driver = 'deviceaccess.drivers.testing.doesnotexits'     # unknown driver module
+        driver = 'agency.drivers.testing.doesnotexits'     # unknown driver module
         interface = 127.0.0.1
         port = 8810
         
         """
-        self.assertRaises(ImportError, deviceaccess.config.load, test_config)
+        self.assertRaises(ImportError, agency.config.load, test_config)
 
         # test duplicated aliases i.e. the two same dev_class entries have been
         # given the same alias
@@ -229,18 +229,18 @@ class deviceaccessTest(unittest.TestCase):
         [testswipe]
         alias = 1                    # first alias: OK
         dev_class = 'swipe'           
-        driver = 'deviceaccess.drivers.testing.swipe'
+        driver = 'agency.drivers.testing.swipe'
         interface = 127.0.0.1
         port = 8810
 
         [magtek]
         alias = 1                   # Duplicate alias!
         dev_class = 'swipe'           
-        driver = 'deviceaccess.drivers.testing.fake'     
+        driver = 'agency.drivers.testing.fake'     
         
         """
 
-        self.assertRaises(deviceaccess.ConfigError, deviceaccess.config.load, test_config)
+        self.assertRaises(agency.ConfigError, agency.config.load, test_config)
         
         
         

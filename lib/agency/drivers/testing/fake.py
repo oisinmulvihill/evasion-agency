@@ -6,7 +6,7 @@ Oisin Mulvihill
 2007-07-23
 
 """
-from deviceaccess import device
+from agency import device
 
 
 class Device(device.Base):

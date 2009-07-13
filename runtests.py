@@ -28,9 +28,9 @@ sys.path.extend(package_paths)
 #env['NOSE_WHERE'] = ','.join(test_paths)
 
 # Set up logging so we don't get any logger not found messages:
-import deviceaccess.utils
-#deviceaccess.utils.log_init(logging.DEBUG)
-deviceaccess.utils.log_init(logging.CRITICAL)
+import agency.utils
+#agency.utils.log_init(logging.DEBUG)
+agency.utils.log_init(logging.CRITICAL)
 
 result = nose.core.TestProgram().success
 nose.result.end_capture()

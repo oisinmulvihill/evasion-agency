@@ -6,7 +6,7 @@ Oisin Mulvihill
 2009-04-04
 
 """
-from deviceaccess.base import service
+from agency.base import service
 
 
 

@@ -19,7 +19,7 @@ from pydispatch import dispatcher
 
 
 def get_log():
-    return logging.getLogger("deviceaccess.manager")
+    return logging.getLogger("agency.manager")
 
 
 def appmain(isExit):
@@ -77,7 +77,7 @@ def setup(logconfig, deviceconfig, managerconfig):
         hdlr.setFormatter(formatter)
         log.addHandler(hdlr)
         log.setLevel(logging.DEBUG)
-        logging.getLogger("deviceaccess")
+        logging.getLogger("agency")
 
     # Check the requried config files exits:
     check_exits = [
@@ -107,14 +107,14 @@ def setup(logconfig, deviceconfig, managerconfig):
 
     # Load the device/hardware configuration file, set it up
     # and start the devices running ready for use:
-    import deviceaccess
-    from deviceaccess import manager
+    import agency
+    from agency import manager
 
     fd = open(deviceconfig)
-    deviceaccess_config = fd.read()
+    agency_config = fd.read()
     fd.close()
 
-    manager.load(deviceaccess_config)
+    manager.load(agency_config)
     manager.setUp()
     manager.start()
 
@@ -131,14 +131,14 @@ def run(app=appmain):
     """Called to run a set up manager.
     """
     import messenger
-    import deviceaccess
+    import agency
  
     # Messaging system needs to run as the main loop the program will run 
     # inside appmain(), which is run in a different thread.
     try:
         messenger.run(app)
     finally:
-        deviceaccess.shutdown()
+        agency.shutdown()
 
 #
 DEFAULT_CONFIG_NAME = "devices.cfg"
@@ -149,17 +149,17 @@ def create_config(cfg_data):
     """Create the default director.ini in the current directory based
     on a the template stored in director.templatecfg
     """
-    import deviceaccess
-    import deviceaccess.templatecfg
+    import agency
+    import agency.templatecfg
     from mako.template import Template
     from pkg_resources import resource_string
 
     print("Creating initial configuration: '%s', '%s' and '%s'." % (DEFAULT_CONFIG_NAME, DEFAULT_MANAGER_CONFIG_NAME, DEFAULT_LOGCONFIG_NAME))
 
     # Recover the template file we will fill out with the path information:
-    dcfg_data = resource_string(deviceaccess.templatecfg.__name__, 'devices.cfg.in')
-    mcfg_data = resource_string(deviceaccess.templatecfg.__name__, 'manager.cfg.in')
-    logcfg_data = resource_string(deviceaccess.templatecfg.__name__, 'log.cfg.in')
+    dcfg_data = resource_string(agency.templatecfg.__name__, 'devices.cfg.in')
+    mcfg_data = resource_string(agency.templatecfg.__name__, 'manager.cfg.in')
+    logcfg_data = resource_string(agency.templatecfg.__name__, 'log.cfg.in')
 
     # Ok, write the result out to disk:
     fd = open(DEFAULT_CONFIG_NAME, 'w')

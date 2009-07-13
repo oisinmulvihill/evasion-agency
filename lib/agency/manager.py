@@ -12,11 +12,11 @@ import sys
 import logging
 import traceback
 
-import deviceaccess
+import agency
 
 
 def get_log():
-    return logging.getLogger('deviceaccess.manager')
+    return logging.getLogger('agency.manager')
 
 
 # Set to True to prevent the manager form catching exceptions
@@ -37,7 +37,7 @@ class Manager(object):
     """
     def __init__(self):
         self._devices = {}
-        self.log = logging.getLogger('deviceaccess.manager.Manager')
+        self.log = logging.getLogger('agency.manager.Manager')
 
     
     def getDeviceCount(self):
@@ -103,7 +103,7 @@ class Manager(object):
         if self.devices > 0:
             raise ManagerError("Load has been called already! Please call shutdown first!")
         
-        loaded_devices = deviceaccess.config.load(config)
+        loaded_devices = agency.config.load(config)
         
         for dev in loaded_devices:
             dev.device = dev.driver()

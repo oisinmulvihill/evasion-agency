@@ -9,7 +9,7 @@ Oisin Mulvihill
 """
 from setuptools import setup, find_packages
 
-Name='evasion-deviceaccess'
+Name='evasion-agency'
 ProjecUrl="" #""
 Version='1.0.0'
 Author='Oisin Mulvihill'
@@ -20,11 +20,11 @@ License=''
 ShortDescription=Summary
 
 # Recover the ReStructuredText docs:
-fd = file("lib/deviceaccess/docs/deviceaccess.stx")
+fd = file("lib/agency/docs/agency.stx")
 Description=fd.read()
 fd.close()
 
-TestSuite = 'deviceaccess.tests'
+TestSuite = 'agency.tests'
 
 needed = [
     'Mako',
@@ -38,16 +38,16 @@ if not sys.platform.startswith('win'):
     needed.append('twisted')
     
 
-# Include everything under deviceaccess. I needed to add a __init__.py
-# to each directory inside deviceaccess I did this using the following
+# Include everything under agency. I needed to add a __init__.py
+# to each directory inside agency I did this using the following
 # handy command:
 #
-#  find lib/deviceaccess -type d -exec touch {}//__init__.py \;
+#  find lib/agency -type d -exec touch {}//__init__.py \;
 #
 # If new directories are added then I'll need to rerun this command.
 #
 EagerResources = [
-#    'deviceaccess',
+#    'agency',
 ]
 
 ProjectScripts = [
