@@ -68,24 +68,21 @@ class agencyTest(unittest.TestCase):
         
         [testswipe]
         # first card swipe
-        alias = 1
-        dev_class = 'swipe'
+        disable = 'no'
         driver = 'agency.drivers.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
         [magtekusbhid]
         # second card swipe
-        alias = 2
-        dev_class = 'swipe'
+        disable = 'no'
         driver = 'agency.drivers.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
         [tsp700]
         # first printer
-        alias = 1
-        dev_class = 'printer'
+        disable = 'no'
         driver = 'agency.drivers.testing.fake'
         interface = 127.0.0.1
         port = 8810
