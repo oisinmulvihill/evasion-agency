@@ -38,7 +38,25 @@ class ConfigError(Exception):
 
 class Container(object):
     """This represents a configuration sections as recoverd from the 
-    device configuration.    
+    agent configuration.    
+    
+    A config section can have the following options::
+    
+        [name]
+        # The python path to agent to import e.g.
+        agent = 'agency.testing.fake'
+        
+        # A ategoary from agency.AGENT_CATEGORIES
+        cat = 'general'
+        
+        # OPTIONAL: a unique number which can be used instead of name
+        # to refer to this agent.
+        alias = 1
+        
+        # OPTIONAL: disable the setup/tearDown/start/stop of the
+        # agent. It will still be loaded and created.
+        disabled = 'yes' | 'no'
+    
     """
     reserved = ()
     def __init__(self):
@@ -47,7 +65,7 @@ class Container(object):
         self.alias = None
         self.node = None
         self.name = None
-        self.disable = "no"
+        self.disabled = "no"
         # alias is no longer required.
         self.reserved = ('agent', 'cat', 'reserved', 'name')
         self.config = None

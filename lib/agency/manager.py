@@ -84,10 +84,10 @@ class Manager(object):
         will be raised.
         
         """
-        print "self._agents:"
-        import pprint
-        pprint.pprint(self._agents)
-        print
+#        print "self._agents:"
+#        import pprint
+#        pprint.pprint(self._agents)
+#        print
 
         full_alias = alias
         if not absolute:
@@ -146,6 +146,9 @@ class Manager(object):
             raise ManagerError("Load has not been called! Please do this first!")
         
         for a in self._agents.values():
+            if a.disabled == 'yes':
+                # skip this agent.
+                continue
             try:
                 a.agent.setUp(a.config)
             except:
@@ -169,6 +172,9 @@ class Manager(object):
             raise ManagerError("Load has not been called! Please do this first!")
 
         for a in self._agents.values():
+            if a.disabled == 'yes':
+                # skip this agent.
+                continue
             try:
                 a.agent.tearDown()
             except:
@@ -189,6 +195,9 @@ class Manager(object):
             raise ManagerError("Load has not been called! Please do this first!")
 
         for a in self._agents.values():
+            if a.disabled == 'yes':
+                # skip this agent.
+                continue
             try:
                 a.agent.start()
             except:
@@ -209,6 +218,9 @@ class Manager(object):
             raise ManagerError("Load has not been called! Please do this first!")
         
         for a in self._agents.values():
+            if a.disabled == 'yes':
+                # skip this agent.
+                continue
             try:
                 a.agent.stop()
             except:

@@ -86,7 +86,7 @@ class agencyTest(unittest.TestCase):
         
         [tsp700]
         # first printer: load but don't use it.
-        disable = 'yes'
+        disabled = 'yes'
         cat = 'printer'
         alias = 1
         agent = 'agency.agents.testing.fake'
