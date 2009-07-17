@@ -8,7 +8,7 @@ import agency.config as config
 
 
 class TestDevice(object):
-    """Used to check the device manager is calling the correct methods.
+    """Used to check the agent manager is calling the correct methods.
     """
     def __init__(self):
         self.setUpCalled = False
@@ -48,7 +48,7 @@ class agencyTest(unittest.TestCase):
     def testmanager(self):
         """Test the Manager class.
         """
-        self.assertEquals(agency.manager.devices, 0)
+        self.assertEquals(agency.manager.agents, 0)
 
         # Make sure you can't call the following without calling load:
         self.assertRaises(agency.ManagerError, agency.manager.tearDown)
@@ -69,83 +69,93 @@ class agencyTest(unittest.TestCase):
         [testswipe]
         # first card swipe
         disable = 'no'
-        driver = 'agency.drivers.testing.fake'
+        cat = 'swipe'
+        alias = 1
+        agent = 'agency.agents.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
         [magtekusbhid]
         # second card swipe
         disable = 'no'
-        driver = 'agency.drivers.testing.fake'
+        cat = 'swipe'
+        alias = 2
+        agent = 'agency.agents.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
         [tsp700]
-        # first printer
-        disable = 'no'
-        driver = 'agency.drivers.testing.fake'
+        # first printer: load but don't use it.
+        disable = 'yes'
+        cat = 'printer'
+        alias = 1
+        agent = 'agency.agents.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
         """
 
-        devices = agency.manager.load(test_config)
-        self.assertEquals(len(devices), 3)
+        agents = agency.manager.load(test_config)
+        self.assertEquals(len(agents), 3)
         
-        dev1 = agency.manager.dev('swipe/1')
-        self.assertEquals(dev1.node, '/dev/swipe/testswipe/1')
-        dev1.device.setParent(td1)
+        agent1 = agency.manager.agent('swipe/1')
+        self.assertEquals(agent1.node, '/agent/swipe/testswipe/1')
+        agent1.agent.setParent(td1)
 
-        dev2 = agency.manager.dev('swipe/2')
-        self.assertEquals(dev2.node, '/dev/swipe/magtekusbhid/2')
-        dev2.device.setParent(td2)
+        agent1 = agency.manager.agent('/agent/swipe/1', absolute=True)
+        self.assertEquals(agent1.node, '/agent/swipe/testswipe/1')
+        agent1.agent.setParent(td1)
 
-        dev3 = agency.manager.dev('printer/1')
-        self.assertEquals(dev3.node, '/dev/printer/tsp700/1')
-        dev3.device.setParent(td3)
+        agent2 = agency.manager.agent('swipe/2')
+        self.assertEquals(agent2.node, '/agent/swipe/magtekusbhid/2')
+        agent2.agent.setParent(td2)
+
+        agent3 = agency.manager.agent('printer/1')
+        self.assertEquals(agent3.node, '/agent/printer/tsp700/1')
+        agent3.agent.setParent(td3)
 
         # Call all the methods and check that the individual
-        # device methods have also been called:
+        # agent methods have also been called:
         agency.manager.setUp()
         self.assertEquals(td1.setUpCalled, True)
         self.assertEquals(td2.setUpCalled, True)
-        self.assertEquals(td3.setUpCalled, True)
+        self.assertEquals(td3.setUpCalled, False)
 
         agency.manager.start()
         self.assertEquals(td1.startCalled, True)
         self.assertEquals(td2.startCalled, True)
-        self.assertEquals(td3.startCalled, True)
+        self.assertEquals(td3.startCalled, False)
 
         agency.manager.stop()
         self.assertEquals(td1.stopCalled, True)
         self.assertEquals(td2.stopCalled, True)
-        self.assertEquals(td3.stopCalled, True)
+        self.assertEquals(td3.stopCalled, False)
 
         agency.manager.tearDown()
         self.assertEquals(td1.tearDownCalled, True)
         self.assertEquals(td2.tearDownCalled, True)
-        self.assertEquals(td3.tearDownCalled, True)
+        self.assertEquals(td3.tearDownCalled, False)
 
 
     def testagencyNodes(self):
-        """Test the device node id generation.
+        """Test the agent node id generation.
         """
         
-        # check that all the device nodes have no entries:
-        for dev_class in agency.DEVICE_CLASSES:
-            count = agency.node.get(dev_class)
+        # check that all the agent nodes have no entries:
+        for cat in agency.AGENT_CATEGORIES:
+            count = agency.node.get(cat)
             self.assertEquals(count, 0)
 
-        self.assertRaises(ValueError, agency.node.add, 'unknown dev class', 'testing' ,'1')
+        self.assertRaises(ValueError, agency.node.add, 'unknown agent class', 'testing' ,'1')
 
         # test generation of new ids
         node_id, alias_id = agency.node.add('swipe', 'testing', '12')
-        self.assertEquals(node_id, '/dev/swipe/testing/1')
-        self.assertEquals(alias_id, '/dev/swipe/12')
+        self.assertEquals(node_id, '/agent/swipe/testing/1')
+        self.assertEquals(alias_id, '/agent/swipe/12')
 
         node_id, alias_id = agency.node.add('swipe', 'testing', '23')
-        self.assertEquals(node_id, '/dev/swipe/testing/2')
-        self.assertEquals(alias_id, '/dev/swipe/23')
+        self.assertEquals(node_id, '/agent/swipe/testing/2')
+        self.assertEquals(alias_id, '/agent/swipe/23')
 
     
     def testConfigContainer(self):
@@ -156,10 +166,10 @@ class agencyTest(unittest.TestCase):
         # Check it catches that I haven't provided the required fields:
         self.assertRaises(config.ConfigError, c.check)
         
-        c.node = '/dev/swipe/testing/1'
-        c.alias = '/dev/swipe/1'
-        c.dev_class = 'swipe'
-        c.driver = 'devicaccess.drivers.testing.swipe'
+        c.node = '/agent/swipe/testing/1'
+        c.alias = '/agent/swipe/1'
+        c.cat = 'swipe'
+        c.agent = 'agency.agents.testing.swipe'
         c.name = 'testingswipe'
         
         # This should not now raise ConfigError.
@@ -173,8 +183,8 @@ class agencyTest(unittest.TestCase):
         
         [testswipe]
         alias = 1
-        dev_class = 'swipe'
-        driver = 'agency.drivers.testing.swipe'
+        cat = 'swipe'
+        agent = 'agency.agents.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
@@ -182,15 +192,15 @@ class agencyTest(unittest.TestCase):
         def check(node, alias):
             pass
          
-        devices = agency.config.load(test_config, check)
-        dev1 = devices[0]
+        agents = agency.config.load(test_config, check)
+        agent1 = agents[0]
         
-        self.assertEquals(dev1.alias, '/dev/swipe/1')
-        self.assertEquals(dev1.node, '/dev/swipe/testswipe/1')        
-        self.assertEquals(dev1.name, 'testswipe')        
+        self.assertEquals(agent1.alias, '/agent/swipe/1')
+        self.assertEquals(agent1.node, '/agent/swipe/testswipe/1')        
+        self.assertEquals(agent1.name, 'testswipe')        
                 
-        self.assertEquals(dev1.interface, '127.0.0.1')        
-        self.assertEquals(dev1.port, '8810')        
+        self.assertEquals(agent1.interface, '127.0.0.1')        
+        self.assertEquals(agent1.port, '8810')        
 
 
     def testBadConfigurationCatching(self):
@@ -199,8 +209,8 @@ class agencyTest(unittest.TestCase):
         test_config = """
         [testswipe]
         alias = 1
-        dev_class = 'swipe12'           # unknow dev_class
-        driver = 'agency.drivers.testing.swipe'
+        cat = 'swipe12'           # unknow cat
+        agent = 'agency.agents.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
@@ -212,28 +222,28 @@ class agencyTest(unittest.TestCase):
         test_config = """
         [testswipe]
         alias = 1
-        dev_class = 'swipe'           
-        driver = 'agency.drivers.testing.doesnotexits'     # unknown driver module
+        cat = 'swipe'           
+        agent = 'agency.agents.testing.doesnotexits'     # unknown agent module
         interface = 127.0.0.1
         port = 8810
         
         """
         self.assertRaises(ImportError, agency.config.load, test_config)
 
-        # test duplicated aliases i.e. the two same dev_class entries have been
+        # test duplicated aliases i.e. the two same cat entries have been
         # given the same alias
         test_config = """
         [testswipe]
         alias = 1                    # first alias: OK
-        dev_class = 'swipe'           
-        driver = 'agency.drivers.testing.swipe'
+        cat = 'fake'           
+        agent = 'agency.agents.testing.swipe'
         interface = 127.0.0.1
         port = 8810
 
         [magtek]
         alias = 1                   # Duplicate alias!
-        dev_class = 'swipe'           
-        driver = 'agency.drivers.testing.fake'     
+        cat = 'swipe'           
+        agent = 'agency.agents.testing.fake'     
         
         """
 

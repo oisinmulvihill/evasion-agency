@@ -1,28 +1,24 @@
 """
-This device is used to test the device manager and has no other
-functional use.
-
-Oisin Mulvihill
-2007-07-23
+This agent is used to test the agent manager and has no other functional use.
 
 """
-from agency import device
+from agency import agent
 
 
-class Device(device.Base):
+class Agent(agent.Base):
     """This is a completely fake module used in unit testing to allow
     the manager to call all the methods with out starting an stopping
-    physical devices.
+    physical agents.
 
-    Valid example configuration for this fake device is:
+    Valid example configuration for this fake agent is::
     
         [testswipe]
         # first card swipe
         alias = 1
-        dev_class = 'swipe'
-        driver = 'testing.fake'
+        cat = 'swipe'
+        agent = 'agency.testing.fake'
 
-    If you set the parent object that implments the device.Base
+    If you set the parent object that implements the agent.Base
     methods, then you get callbacks for each time the methods
     are called.
     
@@ -54,14 +50,6 @@ class Device(device.Base):
     def stop(self):
         if self._parent:
             self._parent.stop()
-
-    def query(self):
-        """Returned a dictionary of events swipe users can subscribe too.
-        """
-        if self._parent:
-            return self._parent.query()
-        else:
-            return {}
 
 
 

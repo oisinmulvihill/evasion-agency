@@ -1,5 +1,22 @@
 """
+:mod:`config` -- This supervises then agents under its control.
+=================================================================
+
+.. module:: config
+   :platform: Unix, MacOSX, Windows
+   :synopsis: This supervises then agents under its control.
+.. moduleauthor:: Oisin Mulvihill <oisin.mulvihill@gmail.com>
+
 This module provides the device layer configuration parsing and handling. 
+
+.. exception:: agency.config.ConfigError
+
+.. autoclass:: agency.config.Container
+   :members:
+   :undoc-members:
+
+.. autofunction:: agency.config.load(config, check=None)
+
 
 """
 import logging
@@ -25,12 +42,14 @@ class Container(object):
     """
     reserved = ()
     def __init__(self):
-        self.driver = None
-        self.dev_class = None
+        self.agent = None
+        self.cat = None
         self.alias = None
         self.node = None
         self.name = None
-        self.reserved = ('driver', 'dev_class', 'alias', 'reserved', 'name')
+        self.disable = "no"
+        # alias is no longer required.
+        self.reserved = ('agent', 'cat', 'reserved', 'name')
         self.config = None
         self.device = None
     
@@ -48,7 +67,7 @@ class Container(object):
     def __str__(self):
         """Print out who were representing and some unique identifier."""
         #print "self:", self.__dict__
-        return "<Device: node %s, alias %s>" % (self.node, self.alias)
+        return "<Agent: node %s, alias %s>" % (self.node, self.alias)
 
     
     def __repr__(self):
@@ -57,15 +76,15 @@ class Container(object):
 
 
 def load(config, check=None):
-    """Called to test and then load the device configuration.
+    """Called to test and then load the agent configuration.
     
     config:
         This is a string representing the contents of the
-        device layer's configuration file.
+        configuration file.
     
     check:
         If this is given the callback will be invoked and
-        given the node and aliad of the config object. The
+        given the node and alias of the config object. The
         callback can then check if its unique. Its up to the
         user to determine what to do if they're not.
     
@@ -87,28 +106,28 @@ def load(config, check=None):
         if not c.config:
             c.config = section
             
-        if key == 'dev_class' and value not in agency.DEVICE_CLASSES:
-            raise ConfigError("The class '%s' is not known. It might need adding to '%s'." % (key, agency.DEVICE_CLASSES))
+        if key == 'cat' and value not in agency.AGENT_CATEGORIES:
+            raise ConfigError("The class '%s' is not known. It might need adding to '%s'." % (key, agency.AGENT_CATEGORIES))
             
-        elif key == 'driver':
-            def recover_driver():
+        elif key == 'agent':
+            def recover_agent():
                 # default: nothing found.
                 returned = None
                 
                 # Check I can at least import the stated module.
                 try:
                     # absolute imports only:
-                    imported_driver = __import__(section[key], fromlist=section[key].split('.'), level=0)
+                    imported_agent = __import__(section[key], fromlist=section[key].split('.'), level=0)
                 except ImportError, e:
-                     raise ImportError("The driver '%s' was not found! %s" % (section[key], traceback.format_exc()))                        
+                     raise ImportError("The agent '%s' was not found! %s" % (section[key], traceback.format_exc()))                        
 
-                # Now see if it contains a Device class all driver must have to load:
-                if hasattr(imported_driver, 'Device'):
-                    returned = getattr(imported_driver, 'Device')
+                # Now see if it contains a Agent category all agent must have to load:
+                if hasattr(imported_agent, 'Agent'):
+                    returned = getattr(imported_agent, 'Agent')
                     
                 return returned
 
-            value = recover_driver()
+            value = recover_agent()
             if not value:
                 raise ConfigError("I was unable to import '%s' from '%s'." % (item, current))
                         
@@ -122,7 +141,7 @@ def load(config, check=None):
     alias_check = {}
     def update_and_check(c):
         c.check()
-        c.node, c.alias = agency.node.add(c.dev_class, c.name, c.alias)
+        c.node, c.alias = agency.node.add(c.cat, c.name, c.alias)
         if alias_check.get(c.alias, 0):
             bad = c.alias.split('/')[-1]
             raise ConfigError("A duplicate config alias '%s' has been found for configuration '%s'" % (bad, c.name))
