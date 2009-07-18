@@ -1,5 +1,18 @@
 """
+:mod:`fake` -- This is used in testing the agents
+===================================================
+
+.. module:: fake
+   :platform: Unix, MacOSX, Windows
+   :synopsis: This supervises then agents under its control.
+.. moduleauthor:: Oisin Mulvihill <oisin.mulvihill@gmail.com>
+
 This agent is used to test the agent manager and has no other functional use.
+
+.. autoclass:: agency.agents.testing.fake.Agent
+   :members:
+   :undoc-members:
+
 
 """
 from agency import agent

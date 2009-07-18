@@ -69,8 +69,8 @@ class Container(object):
         # alias is no longer required.
         self.reserved = ('agent', 'cat', 'reserved', 'name')
         self.config = None
-        self.device = None
-    
+        self.agent = None
+
     def check(self):
         """Called to check that all the reserved fields have been provided.
         
@@ -115,6 +115,13 @@ def load(config, check=None):
     processed = {}
     
     def recover(section, key):
+    
+        # If the section does not have and 'agent' then
+        # it is not considered and ignored.
+        if 'agent' not in section:
+            get_log().info("The config section '%s' does not appear to be an agent section. Ignoring." % key)
+            return
+    
         value = section[key]
         c = processed.get(section.name, Container())            
         

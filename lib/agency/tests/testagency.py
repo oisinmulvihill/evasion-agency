@@ -33,7 +33,7 @@ class TestDevice(object):
         self.queryCalled = True
 
 
-class agencyTest(unittest.TestCase):
+class AgencyTC(unittest.TestCase):
 
     def setUp(self):
         # unittesting reset:
@@ -42,9 +42,85 @@ class agencyTest(unittest.TestCase):
         # unittesting reset:
         agency.manager.shutdown()
 
-#    def testABC(self):
-#        self.assertEquals(1,0,"buildbot email test")
+        
+    def testAgentConfigFilter(self):
+        """Test the extraction of devices from a config file which may contain other things.
+        """
+        test_config = """
 
+        [My section]
+        this = 'should be ignored'
+        yes = True
+        
+        [and this too]
+        notanagent = 1
+        
+        [testswipe]
+        # first card swipe
+        disable = 'no'
+        cat = 'swipe'
+        alias = 1
+        agent = 'agency.agents.testing.fake'
+        interface = 127.0.0.1
+        port = 8810
+        
+        [magtekusbhid]
+        # second card swipe
+        disable = 'no'
+        cat = 'swipe'
+        alias = 2
+        agent = 'agency.agents.testing.fake'
+        interface = 127.0.0.1
+        port = 8810
+        
+        [tsp700]
+        # first printer: load but don't use it.
+        disabled = 'yes'
+        cat = 'printer'
+        alias = 1
+        agent = 'agency.agents.testing.fake'
+        interface = 127.0.0.1
+        port = 8810
+        
+        """
+        td1 = TestDevice()
+        
+        # These should run without problems.
+        agents = agency.manager.load(test_config)
+        self.assertEquals(len(agents), 3)
+
+        agent1 = agency.manager.agent('swipe/1')
+        self.assertEquals(agent1.node, '/agent/swipe/testswipe/1')
+        agent1.agent.setParent(td1)
+
+        agent1 = agency.manager.agent('/agent/swipe/1', absolute=True)
+        self.assertEquals(agent1.node, '/agent/swipe/testswipe/1')
+        agent1.agent.setParent(td1)
+        
+        # unittesting reset:
+        agency.node._reset()
+
+        # unittesting reset:
+        agency.manager.shutdown()
+
+        test_config = ""
+        agents = agency.manager.load(test_config)
+        self.assertEquals(len(agents), 0)
+
+        # unittesting reset:
+        agency.node._reset()
+
+        # unittesting reset:
+        agency.manager.shutdown()
+
+        test_config = """
+        [messenger]
+        host = '127.0.0.1'
+        """
+        agents = agency.manager.load(test_config)
+        self.assertEquals(len(agents), 0)
+
+        
     def testmanager(self):
         """Test the Manager class.
         """

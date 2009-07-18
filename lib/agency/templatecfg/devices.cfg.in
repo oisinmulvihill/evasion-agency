@@ -1,13 +1,7 @@
 #
-# Template Device Layer configuration file.
-#
-# Oisin Mulvihill
-# 2009-04-05
+# A minial example of an agent configuration.
 #
 
 [test]
-dev_class = service
-driver = agency.drivers.testing.fake
-alias = 1
-interface = 127.0.0.1
-port = 8810
+cat = service
+agent = agency.agents.testing.fake
