@@ -119,7 +119,7 @@ def load(config, check=None):
         # If the section does not have and 'agent' then
         # it is not considered and ignored.
         if 'agent' not in section:
-            get_log().info("The config section '%s' does not appear to be an agent section. Ignoring." % key)
+            #get_log().info("The config section '%s' does not appear to be an agent section. Ignoring." % key)
             return
     
         value = section[key]
