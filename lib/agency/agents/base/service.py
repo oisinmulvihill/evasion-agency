@@ -13,8 +13,8 @@ from pydispatch import dispatcher
 
 import messenger
 from agency import agent
+from agency.agents import base
 from director import viewpointdirect
-from agency.drivers import base
 from messenger import xulcontrolprotocol        
 
 
@@ -31,7 +31,7 @@ class ControlFrameRequest(SocketServer.StreamRequestHandler):
 class StoppableTCPServer(SocketServer.TCPServer):
     """Handle requests but check for the exit flag setting periodically.    
     """
-    log = logging.getLogger('agency.base.service.StoppableTCPServer')
+    log = logging.getLogger('agency.agents.base.service.StoppableTCPServer')
 
     exitTime = False
     
