@@ -13,7 +13,6 @@ from pydispatch import dispatcher
 
 import messenger
 from agency import agent
-from agency.agents import base
 from director import viewpointdirect
 from messenger import xulcontrolprotocol        
 
