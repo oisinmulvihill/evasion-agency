@@ -1,9 +1,22 @@
 """
-This is the main function to run the device layer as its own process.
-This will generally be run and managed by the app manager.
+:mod:`agency.scripts.manager` -- This supervises then agents under its control.
+=================================================================
 
-Oisin Mulvhill
-2007-08-02
+.. module:: 'agency.scripts.manager'
+   :platform: Unix, MacOSX, Windows
+   :synopsis: This supervises then agents under its control.
+.. moduleauthor:: Oisin Mulvihill <oisin.mulvihill@gmail.com>
+
+This is where the main function to run the agency lives. This will 
+generally be run and managed by the director.
+
+.. autofunction:: agency.scripts.manager.appmain(isExit)
+.. autofunction:: agency.scripts.manager.setup(logconfig, deviceconfig, managerconfig)
+.. autofunction:: agency.scripts.manager.exit()
+.. autofunction:: agency.scripts.manager.run(app=appmain)
+.. autofunction:: agency.scripts.manager.create_config(cfg_data)
+.. autofunction:: agency.scripts.manager.main()
+   
 
 """
 import os
@@ -42,26 +55,22 @@ def appmain(isExit):
     )
 
     print "Appmain running."
-    while True:
+    while not isExit():
         time.sleep(0.5)
     print "Appmain exit."
 
 
-def setup(logconfig, deviceconfig, managerconfig):
+def setup(logconfig, managerconfig):
     """Setup the various pieces of information based on the given details.
 
     logconfig:
         path and file to the log configuration. If it doesn't exit
         a default stdout configuration will be used.
 
-    deviceconfig (required):
+    managerconfig (required):
         The device configuration to load, setup and start running.
 
-    managerconfig (required):
         The configuration for stomp, locale, etc setup.
-
-    NOTE: This function is used by both the commandline devicemanger
-    and the windows service.
     
     """
     # Set up python logging if a config file is given:
@@ -81,7 +90,6 @@ def setup(logconfig, deviceconfig, managerconfig):
 
     # Check the requried config files exits:
     check_exits = [
-        deviceconfig,
         managerconfig,
     ]    
     for f in check_exits:
@@ -110,11 +118,7 @@ def setup(logconfig, deviceconfig, managerconfig):
     import agency
     from agency import manager
 
-    fd = open(deviceconfig)
-    agency_config = fd.read()
-    fd.close()
-
-    manager.load(agency_config)
+    manager.load(dm_cfg)
     manager.setUp()
     manager.start()
 
@@ -128,7 +132,8 @@ def exit():
         
 
 def run(app=appmain):
-    """Called to run a set up manager.
+    """Called to run a set up manager running twisted in the main loop
+    and the app in its own thread.
     """
     import messenger
     import agency
@@ -137,6 +142,11 @@ def run(app=appmain):
     # inside appmain(), which is run in a different thread.
     try:
         messenger.run(app)
+        
+    except KeyboardInterrupt, e:
+        agency.shutdown()
+        exit()
+        
     finally:
         agency.shutdown()
 
@@ -187,8 +197,6 @@ def main():
                       help="This is the logging config file.")
     parser.add_option("--config", action="store", dest="config_filename", default="devices.cfg",
                       help="This the hardware configuration file.")
-    parser.add_option("--dmconfig", action="store", dest="manager_config", default="manager.cfg",
-                      help="This the hardware configuration file.")
     parser.add_option("--create", action="store_true", dest="create_config", default=False,
                       help="Create the default manager.cfg and device.cfg.")
     (options, args) = parser.parse_args()
@@ -203,7 +211,6 @@ def main():
     else:
         setup(
             logconfig=options.logconfig_filename,
-            deviceconfig=options.config_filename,
             managerconfig=options.manager_config,
         )
         run(appmain)

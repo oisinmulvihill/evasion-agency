@@ -12,9 +12,8 @@ from pydispatch import dispatcher
 
 
 import messenger
-from agency import device
+from agency import agent
 from director import viewpointdirect
-from agency.drivers import base
 from messenger import xulcontrolprotocol        
 
 
@@ -31,7 +30,7 @@ class ControlFrameRequest(SocketServer.StreamRequestHandler):
 class StoppableTCPServer(SocketServer.TCPServer):
     """Handle requests but check for the exit flag setting periodically.    
     """
-    log = logging.getLogger('agency.base.service.StoppableTCPServer')
+    log = logging.getLogger('agency.agents.base.service.StoppableTCPServer')
 
     exitTime = False
     
@@ -64,14 +63,14 @@ class StoppableTCPServer(SocketServer.TCPServer):
                 pass
 
 
-class FakeViewpointDevice(device.Base):
+class FakeViewpointDevice(agent.Base):
     """A TCPServer interface implement the viewpoint control frame protocol.
     
-    Valid example configuration for this device is:
+    Valid example configuration for this agent is:
     
         [fakeviewpoint]
-        dev_class = service
-        driver = <my code>.<myservice>
+        cat = service
+        agent = <my code>.<myservice>
         alias = 2839
         interface = 127.0.0.1
         port = 7055
@@ -172,14 +171,14 @@ class StoppableXMLRPCServer(SocketServer.ThreadingMixIn, SimpleXMLRPCServer.Simp
 
 
 
-class ServiceDevice(device.Base):
-    """An XML-RPC interface device.
+class ServiceDevice(agent.Base):
+    """An XML-RPC interface agent.
     
-    Valid example configuration for this device is:
+    Valid example configuration for this agent is:
     
         [myservice_name]
-        dev_class = service
-        driver = <my code>.<myservice>
+        cat = service
+        agent = <my code>.<myservice>
         alias = 1
         interface = 127.0.0.1
         port = 8810
