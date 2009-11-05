@@ -144,17 +144,25 @@ def load(config, check=None):
                     # absolute imports only:
                     imported_agent = __import__(section[key], fromlist=section[key].split('.'), level=0)
                 except ImportError, e:
-                     raise ImportError("The agent '%s' was not found! %s" % (section[key], traceback.format_exc()))                        
+                     raise ImportError("The agent module '%s' was not found! %s" % (section[key], traceback.format_exc()))                        
 
-                # Now see if it contains a Agent category all agent must have to load:
+                # TODO:
+                #
+                # This is not very sophisticate an import, my testharness does
+                # this better by importing anything that derives from a set class
+                # I should do something like this here.
+                #                     
                 if hasattr(imported_agent, 'Agent'):
                     returned = getattr(imported_agent, 'Agent')
+                    
+                else:
+                    get_log().error("No 'Agent' class name found in '%s'." % section[key])
                     
                 return returned
 
             value = recover_agent()
             if not value:
-                raise ConfigError("I was unable to import '%s' from '%s'." % (item, current))
+                raise ConfigError("I was unable to import '%s'." % (section[key]))
                         
         setattr(c, key, value)
         processed[section.name] = c
