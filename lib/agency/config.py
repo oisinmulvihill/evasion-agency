@@ -1,13 +1,11 @@
 """
-:mod:`config` -- This supervises then agents under its control.
-=================================================================
+:mod:`agency.config`
+=====================
 
-.. module:: config
-   :platform: Unix, MacOSX, Windows
-   :synopsis: This supervises then agents under its control.
+.. module:: 'agency.config'
 .. moduleauthor:: Oisin Mulvihill <oisin.mulvihill@gmail.com>
 
-This module provides the device layer configuration parsing and handling. 
+This module provides the Agent parsing, loading and configuration handling. 
 
 .. exception:: agency.config.ConfigError
 

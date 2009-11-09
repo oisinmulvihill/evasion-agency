@@ -1,15 +1,14 @@
 """
-:mod:`agent` -- This provides the base agent interface
-=======================================================
+:mod:`agency.agent` 
+====================
 
-.. module:: agent
+.. module:: 'agency.agent'
    :platform: Unix, MacOSX, Windows
    :synopsis: This provides the base agent interface.
 .. moduleauthor:: Oisin Mulvihill <oisin.mulvihill@gmail.com>
 
-This module implements the base agent interface that agents must
-inherit from and implement. The agent manager looks for this
-and if found uses it to create and run the agent.
+This module implements the base agent interface that agents must inherit from and implement. The 
+agent manager looks for this and if found uses it to create and run the agent.
 
 .. autoclass:: agency.agent.Base
    :members:

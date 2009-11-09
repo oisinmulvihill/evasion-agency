@@ -1,3 +1,20 @@
+"""
+:mod:`agency.agents.base.service` 
+==================================
+
+.. module:: 'agency.agents.base.service'
+.. moduleauthor:: Oisin Mulvihill <oisin.mulvihill@gmail.com>
+
+
+.. autoclass:: agency.agents.base.service.ServiceDevice
+   :members:
+   :undoc-members:
+
+.. autoclass:: agency.agents.base.service.FakeViewpointDevice
+   :members:
+   :undoc-members:
+   
+"""
 import uuid
 import time
 import socket
@@ -179,7 +196,6 @@ class ServiceDevice(agent.Base):
         [myservice_name]
         cat = service
         agent = <my code>.<myservice>
-        alias = 1
         interface = 127.0.0.1
         port = 8810
 

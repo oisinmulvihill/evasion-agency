@@ -1,14 +1,14 @@
 """
 :mod:`agency.scripts.manager` -- This supervises then agents under its control.
-=================================================================
+=================================================================================
 
 .. module:: 'agency.scripts.manager'
    :platform: Unix, MacOSX, Windows
    :synopsis: This supervises then agents under its control.
 .. moduleauthor:: Oisin Mulvihill <oisin.mulvihill@gmail.com>
 
-This is where the main function to run the agency lives. This will 
-generally be run and managed by the director.
+This is where the main function to run the agency lives. This will generally be run and managed by 
+the director.
 
 .. autofunction:: agency.scripts.manager.appmain(isExit)
 .. autofunction:: agency.scripts.manager.setup(logconfig, deviceconfig, managerconfig)

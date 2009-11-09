@@ -1,10 +1,8 @@
 """
-:mod:`fake` -- This is used in testing the agents
-===================================================
+:mod:`agency.agents.testing.fake` 
+==================================
 
-.. module:: fake
-   :platform: Unix, MacOSX, Windows
-   :synopsis: This supervises then agents under its control.
+.. module:: 'agency.agents.testing.fake'
 .. moduleauthor:: Oisin Mulvihill <oisin.mulvihill@gmail.com>
 
 This agent is used to test the agent manager and has no other functional use.
@@ -26,8 +24,6 @@ class Agent(agent.Base):
     Valid example configuration for this fake agent is::
     
         [testswipe]
-        # first card swipe
-        alias = 1
         cat = 'swipe'
         agent = 'agency.testing.fake'
 
