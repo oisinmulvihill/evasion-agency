@@ -143,7 +143,8 @@ class Manager(object):
         
         """
         if self.agents < 1:
-            raise ManagerError("Load has not been called! Please do this first!")
+            self.log.warn("There are no agents to set up.")
+            return
         
         for a in self._agents.values():
             if a.disabled == 'yes':
@@ -169,14 +170,16 @@ class Manager(object):
         
         """
         if self.agents < 1:
-            raise ManagerError("Load has not been called! Please do this first!")
+            self.log.warn("There are no agents to tear down.")
+            return
 
         for a in self._agents.values():
             if a.disabled == 'yes':
                 # skip this agent.
                 continue
             try:
-                a.agent.tearDown()
+                if a.agent:
+                    a.agent.tearDown()
             except:
                 self.log.exception("%s tearDown error: " % a)
                 sys.stderr.write("%s tearDown error: %s" % (a, self.formatError()))
@@ -192,7 +195,8 @@ class Manager(object):
 
         """
         if self.agents < 1:
-            raise ManagerError("Load has not been called! Please do this first!")
+            self.log.warn("There are no agents to start.")
+            return
 
         for a in self._agents.values():
             if a.disabled == 'yes':
@@ -215,7 +219,8 @@ class Manager(object):
 
         """
         if self.agents < 1:
-            raise ManagerError("Load has not been called! Please do this first!")
+            self.log.warn("There are no agents to stop.")
+            return
         
         for a in self._agents.values():
             if a.disabled == 'yes':
