@@ -93,10 +93,10 @@ class FakeViewpointDevice(agent.Base):
         port = 7055
                     
     """
-    log = logging.getLogger('agency.base.service.FakeViewpointDevice')
     
     def __init__(self):
         self.config = None
+        self.log = logging.getLogger('agency.base.service.FakeViewpointDevice')
 
 
     def registerRequestHandler(self):
