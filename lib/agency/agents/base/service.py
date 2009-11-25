@@ -30,7 +30,6 @@ from pydispatch import dispatcher
 
 import messenger
 from agency import agent
-from director import viewpointdirect
 from messenger import xulcontrolprotocol        
 
 
@@ -78,74 +77,6 @@ class StoppableTCPServer(SocketServer.TCPServer):
                 return returned
             except socket.timeout:
                 pass
-
-
-class FakeViewpointDevice(agent.Base):
-    """A TCPServer interface implement the viewpoint control frame protocol.
-    
-    Valid example configuration for this agent is:
-    
-        [fakeviewpoint]
-        cat = service
-        agent = <my code>.<myservice>
-        alias = 2839
-        interface = 127.0.0.1
-        port = 7055
-                    
-    """
-    
-    def __init__(self):
-        self.config = None
-        self.log = logging.getLogger('agency.base.service.FakeViewpointDevice')
-
-
-    def registerRequestHandler(self):
-        """Called to register a class instances who's derived from         
-        """
-        raise NotImplemented("Please implement this method!")
-
-                
-    def setUp(self, config):
-        """Create the XML-RPC services. It won't be started until
-        the start() method is called.
-        """
-        self.config = config
-        interface = config.get('interface')
-        port = int(config.get('port'))
-        request_handler = self.registerRequestHandler()
-        self.server = StoppableTCPServer(
-            (interface, port),
-            request_handler
-        )
-
-
-    def tearDown(self):
-        """Stop the service.
-        """
-        self.stop()
-
-
-    def start(self):
-        """Start xmlrpc interface.
-        """
-        def _start(data=0):
-            i = self.config.get('interface')
-            p = self.config.get('port')
-            self.log.info("Fake Viewpoint Service '%s:%s'" % (i,p))
-            try:
-                self.server.serve_forever()
-            except TypeError,e:
-                # caused by ctrl-c. Its ok
-                pass                
-
-        thread.start_new_thread(_start, (0,))
-        
-
-    def stop(self):
-        """Stop xmlrpc interface.
-        """
-        if self.server:
-            self.server.stop()
 
 
 
