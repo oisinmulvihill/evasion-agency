@@ -11,8 +11,6 @@ This is the manager. It is reposible for managing the physical agents the
 application is using. The agent manager takes care of the loading and 
 intialisation of each agent, using the configuration provided by the user.
 
-.. data:: TESTING
-
 .. exception:: agency.manager.ManagerError
 
 .. autoclass:: agency.manager.Manager
@@ -30,11 +28,6 @@ import agency
 
 def get_log():
     return logging.getLogger('agency.manager')
-
-
-# Set to True to prevent the manager form catching exceptions
-# in its methods.
-TESTING=True
 
 
 class ManagerError(Exception):
@@ -155,8 +148,6 @@ class Manager(object):
             except:
                 self.log.exception("%s setUp error: " % a)
                 sys.stderr.write("%s setUp error: %s" % (a, self.formatError()))
-                if TESTING:
-                    raise
 
 
     def tearDown(self):
@@ -183,8 +174,6 @@ class Manager(object):
             except:
                 self.log.exception("%s tearDown error: " % a)
                 sys.stderr.write("%s tearDown error: %s" % (a, self.formatError()))
-                if TESTING:
-                    raise
 
 
     def start(self):
@@ -207,8 +196,6 @@ class Manager(object):
             except:
                 self.log.exception("%s start error: " % a)
                 sys.stderr.write("%s start error: %s" % (a, self.formatError()))
-                if TESTING:
-                    raise
 
 
     def stop(self):
@@ -231,8 +218,6 @@ class Manager(object):
             except:
                 self.log.exception("%s stop error: " % a)
                 sys.stderr.write("%s stop error: %s" % (a, self.formatError()))
-                if TESTING:
-                    raise
         
     
     
