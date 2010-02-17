@@ -24,6 +24,7 @@ import logging
 import traceback
 
 import agency
+import director
 
 
 def get_log():
@@ -94,30 +95,51 @@ class Manager(object):
         return self._agents[full_alias]
     
     
-    def load(self, config):
-        """Load the agent configuration in and generate the agents based on this.
+    def load(self):
+        """Load the agent modules into the system wide configuration.
         
-        Load can only be called after the first time, once
-        shutdown has been called. If this has not been 
-        done then ManagerError will be raised to indicate
-        so.
+        The system wide configuration needs to have been set up
+        via the director.config functions.
+
+        The shutdown method must be called before recalling load.
+        If this has not been done then ManagerError will be raised.
         
-        Returned:
-            For testing purposes the loaded list of agents 
-            config containers is returned. This shouldn't be 
-            used normally.
+        returned:
+            For testing purposes the loaded list of agents . This 
+            shouldn't be used normally.
         
         """
         if self.agents > 0:
             raise ManagerError("Load has been called already! Please call shutdown first!")
+            
+        # Recover the configuration and load in the agent modules
+        # which are currently enabled.
+        c = director.config.get_cfg()
+        cfg_objs = director.config.load_agents(c.cfg)
+        director.config.update_objs(cfg_objs)
+        c = director.config.get_cfg()
         
-        loaded_agents = agency.config.load(config)
-        
-        for a in loaded_agents:
-            a.agent = a.agent()
+        if not c.agency:
+            self.log.warn("load: No agency is present to load agents for.")
+            return []
+
+        # Store the agents we're running here in an addressable form.
+        alias_check = {}
+        for a in c.agency.agents:
+            a.node, a.alias = agency.node.add(a.cat, a.name, a.alias)
+            if alias_check.get(a.alias, 0):
+                bad = a.alias.split('/')[-1]
+                raise ManagerError("A duplicate config alias '%s' has been found for '%s'" % (
+                    bad, a.name
+                ))
+            else:
+                alias_check[a.alias] = 1
+                
             self._agents[a.alias] = a
-        
-        return loaded_agents
+            
+        self.log.info("load: %s agent(s) present." % self.getAgentCount())
+    
+        return c.agency.agents
 
 
     def formatError(self):
@@ -140,11 +162,11 @@ class Manager(object):
             return
         
         for a in self._agents.values():
-            if a.disabled == 'yes':
+            if a.disabled == 'yes' or not a.mod:
                 # skip this agent.
                 continue
             try:
-                a.agent.setUp(a.config)
+                a.mod.setUp(a.config)
             except:
                 self.log.exception("%s setUp error: " % a)
                 sys.stderr.write("%s setUp error: %s" % (a, self.formatError()))
@@ -165,12 +187,11 @@ class Manager(object):
             return
 
         for a in self._agents.values():
-            if a.disabled == 'yes':
+            if a.disabled == 'yes' or not a.mod:
                 # skip this agent.
                 continue
             try:
-                if a.agent:
-                    a.agent.tearDown()
+                a.mod.tearDown()
             except:
                 self.log.exception("%s tearDown error: " % a)
                 sys.stderr.write("%s tearDown error: %s" % (a, self.formatError()))
@@ -188,11 +209,11 @@ class Manager(object):
             return
 
         for a in self._agents.values():
-            if a.disabled == 'yes':
+            if a.disabled == 'yes' or not a.mod:
                 # skip this agent.
                 continue
             try:
-                a.agent.start()
+                a.mod.start()
             except:
                 self.log.exception("%s start error: " % a)
                 sys.stderr.write("%s start error: %s" % (a, self.formatError()))
@@ -210,11 +231,11 @@ class Manager(object):
             return
         
         for a in self._agents.values():
-            if a.disabled == 'yes':
+            if a.disabled == 'yes' or not a.mod:
                 # skip this agent.
                 continue
             try:
-                a.agent.stop()
+                a.mod.stop()
             except:
                 self.log.exception("%s stop error: " % a)
                 sys.stderr.write("%s stop error: %s" % (a, self.formatError()))
