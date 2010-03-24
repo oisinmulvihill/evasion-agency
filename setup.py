@@ -20,11 +20,11 @@ License=''
 ShortDescription=Summary
 
 # Recover the ReStructuredText docs:
-fd = file("lib/agency/docs/agency.stx")
+fd = file("lib/evasion/agency/docs/agency.stx")
 Description=fd.read()
 fd.close()
 
-TestSuite = 'agency.tests'
+TestSuite = 'evasion.agency.tests'
 
 needed = [
     'Mako',
@@ -47,7 +47,7 @@ if not sys.platform.startswith('win'):
 # If new directories are added then I'll need to rerun this command.
 #
 EagerResources = [
-#    'agency',
+#    'evasion',
 ]
 
 ProjectScripts = [
@@ -82,4 +82,5 @@ setup(
     package_dir = {'': 'lib'},
     eager_resources = EagerResources,
     entry_points = EntryPoints,
+    namespace_packages = ['evasion'],
 )
