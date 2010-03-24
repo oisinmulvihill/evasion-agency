@@ -1,32 +1,32 @@
 """
-:mod:`agency.config`
+:mod:`evasion.agency.config`
 =====================
 
-.. module:: 'agency.config'
+.. module:: 'evasion.agency.config'
 .. moduleauthor:: Oisin Mulvihill <oisin.mulvihill@gmail.com>
 
 This module provides the Agent parsing, loading and configuration handling. 
 
-.. exception:: agency.config.ConfigError
+.. exception:: evasion.agency.config.ConfigError
 
-.. autoclass:: agency.config.Container
+.. autoclass:: evasion.agency.config.Container
    :members:
    :undoc-members:
 
-.. autofunction:: agency.config.load(config, check=None)
+.. autofunction:: evasion.agency.config.load(config, check=None)
 
 
 """
 import logging
 import StringIO
+import traceback
 
 import configobj
 
-import agency
-import traceback
+
 
 def get_log():
-    return logging.getLogger('agency.config')
+    return logging.getLogger('evasion.agency.config')
 
 
 class ConfigError(Exception):
@@ -111,6 +111,8 @@ def load(config, check=None):
     """
     cfg = configobj.ConfigObj(StringIO.StringIO(config))
     processed = {}
+    # Lazy import to prevent cirular imports:
+    from evasion.agency import AGENT_CATEGORIES
     
     def recover(section, key):
     
@@ -129,8 +131,8 @@ def load(config, check=None):
         if not c.config:
             c.config = section
             
-        if key == 'cat' and value not in agency.AGENT_CATEGORIES:
-            raise ConfigError("The class '%s' is not known. It might need adding to '%s'." % (key, agency.AGENT_CATEGORIES))
+        if key == 'cat' and value not in AGENT_CATEGORIES:
+            raise ConfigError("The class '%s' is not known. It might need adding to '%s'." % (key, AGENT_CATEGORIES))
             
         elif key == 'agent':
             def recover_agent():

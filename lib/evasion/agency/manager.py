@@ -11,9 +11,9 @@ This is the manager. It is reposible for managing the physical agents the
 application is using. The agent manager takes care of the loading and 
 intialisation of each agent, using the configuration provided by the user.
 
-.. exception:: agency.manager.ManagerError
+.. exception:: evasion.agency.manager.ManagerError
 
-.. autoclass:: agency.manager.Manager
+.. autoclass:: evasion.agency.manager.Manager
    :members:
    :undoc-members:
 
@@ -23,12 +23,12 @@ import sys
 import logging
 import traceback
 
+
 import agency
-import director
 
 
 def get_log():
-    return logging.getLogger('agency.manager')
+    return logging.getLogger('evasion.agency.manager')
 
 
 class ManagerError(Exception):
@@ -44,7 +44,7 @@ class Manager(object):
     """
     def __init__(self):
         self._agents = {}
-        self.log = logging.getLogger('agency.manager.Manager')
+        self.log = logging.getLogger('evasion.agency.manager.Manager')
 
     
     def getAgentCount(self):
@@ -111,6 +111,9 @@ class Manager(object):
         """
         if self.agents > 0:
             raise ManagerError("Load has been called already! Please call shutdown first!")
+        
+        # Lazy import to prevent circular imports.
+        from evasion import director
             
         # Recover the configuration and load in the agent modules
         # which are currently enabled.

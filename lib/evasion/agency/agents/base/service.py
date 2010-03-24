@@ -28,9 +28,7 @@ import SimpleXMLRPCServer
 from pydispatch import dispatcher
 
 
-import messenger
-from agency import agent
-from messenger import xulcontrolprotocol        
+from evasion.agency import agent
 
 
 
@@ -46,7 +44,7 @@ class ControlFrameRequest(SocketServer.StreamRequestHandler):
 class StoppableTCPServer(SocketServer.TCPServer):
     """Handle requests but check for the exit flag setting periodically.    
     """
-    log = logging.getLogger('agency.agents.base.service.StoppableTCPServer')
+    log = logging.getLogger('evasion.agency.agents.base.service.StoppableTCPServer')
 
     exitTime = False
     
@@ -88,7 +86,7 @@ class StoppableXMLRPCServer(SocketServer.ThreadingMixIn, SimpleXMLRPCServer.Simp
         http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/425210
     
     """
-    log = logging.getLogger('agency.base.service.StoppableXMLRPCServer')
+    log = logging.getLogger('evasion.agency.base.service.StoppableXMLRPCServer')
 
     exitTime = False
     
@@ -136,7 +134,7 @@ class ServiceDevice(agent.Base):
         'http://interface:port/'
                     
     """
-    log = logging.getLogger('agency.base.service.ServiceDevice')
+    log = logging.getLogger('evasion.agency.base.service.ServiceDevice')
     
     def __init__(self):
         self.config = None

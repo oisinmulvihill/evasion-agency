@@ -12,7 +12,7 @@ from manager import ManagerError
 __all__ = ['AGENT_CATEGORIES', 'Nodes', 'shutdown', 'node', 'manager']
 
 def get_log():
-    return logging.getLogger('agency.agency')
+    return logging.getLogger('evasion.agency.agency')
 
 
 AGENT_CATEGORIES = {

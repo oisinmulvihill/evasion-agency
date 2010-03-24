@@ -1,4 +1,0 @@
-configobj
-twisted
-pydispatcher
-messenger

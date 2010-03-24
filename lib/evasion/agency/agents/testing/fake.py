@@ -13,7 +13,7 @@ This agent is used to test the agent manager and has no other functional use.
 
 
 """
-from agency import agent
+from evasion.agency import agent
 
 
 class Agent(agent.Base):

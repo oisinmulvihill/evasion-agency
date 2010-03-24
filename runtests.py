@@ -1,38 +1,21 @@
 #!/usr/bin/env python
-#
-# Oisin Mulvihill
-# 2008-12-23
-#
+"""
+Use nosetests to run the unit tests for this project.
+
+"""
 import os
 import sys
-import nose
-import os.path
 import logging
 
+import nose
 
-current = os.path.abspath(os.path.curdir)
+sys.path.extend(["./lib",])
 
-package_paths = [
-    './lib',
-]
-sys.path.extend(package_paths)
+# only run tests from here as the others it finds
+# are not unit tests.
+env = {}
+env['NOSE_WHERE'] = 'lib/evasion/agency/tests,'
 
-# Let nosetest run free for the moment.
-#
-# Only bother looking for tests in these locations:
-# (Note: these need to be absolute paths)
-#test_paths = [
-#    os.path.join(current, 'tests'),
-#]
-#env = os.environ
-#env['NOSE_WHERE'] = ','.join(test_paths)
-
-# Set up logging so we don't get any logger not found messages:
-import agency.utils
-#agency.utils.log_init(logging.DEBUG)
-agency.utils.log_init(logging.CRITICAL)
-
-result = nose.core.TestProgram().success
+result = nose.core.TestProgram(env=env).success
 nose.result.end_capture()
-
 
