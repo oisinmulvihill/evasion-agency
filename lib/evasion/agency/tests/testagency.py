@@ -3,8 +3,8 @@
 import unittest
 
 
-import agency
-import agency.config as config
+from evasion import agency
+from evasion.agency import config
 
 
 class TestDevice(object):
@@ -60,7 +60,7 @@ class AgencyTC(unittest.TestCase):
         disable = 'no'
         cat = 'swipe'
         alias = 1
-        agent = 'agency.agents.testing.fake'
+        agent = 'evasion.agency.agents.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
@@ -69,7 +69,7 @@ class AgencyTC(unittest.TestCase):
         disable = 'no'
         cat = 'swipe'
         alias = 2
-        agent = 'agency.agents.testing.fake'
+        agent = 'evasion.agency.agents.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
@@ -78,7 +78,7 @@ class AgencyTC(unittest.TestCase):
         disabled = 'yes'
         cat = 'printer'
         alias = 1
-        agent = 'agency.agents.testing.fake'
+        agent = 'evasion.agency.agents.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
@@ -147,7 +147,7 @@ class AgencyTC(unittest.TestCase):
         disable = 'no'
         cat = 'swipe'
         alias = 1
-        agent = 'agency.agents.testing.fake'
+        agent = 'evasion.agency.agents.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
@@ -156,7 +156,7 @@ class AgencyTC(unittest.TestCase):
         disable = 'no'
         cat = 'swipe'
         alias = 2
-        agent = 'agency.agents.testing.fake'
+        agent = 'evasion.agency.agents.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
@@ -165,7 +165,7 @@ class AgencyTC(unittest.TestCase):
         disabled = 'yes'
         cat = 'printer'
         alias = 1
-        agent = 'agency.agents.testing.fake'
+        agent = 'evasion.agency.agents.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
@@ -260,7 +260,7 @@ class AgencyTC(unittest.TestCase):
         [testswipe]
         alias = 1
         cat = 'swipe'
-        agent = 'agency.agents.testing.fake'
+        agent = 'evasion.agency.agents.testing.fake'
         interface = 127.0.0.1
         port = 8810
         
@@ -299,7 +299,7 @@ class AgencyTC(unittest.TestCase):
         [testswipe]
         alias = 1
         cat = 'swipe'           
-        agent = 'agency.agents.testing.doesnotexits'     # unknown agent module
+        agent = 'evasion.agency.agents.testing.doesnotexits'     # unknown agent module
         interface = 127.0.0.1
         port = 8810
         
@@ -312,14 +312,14 @@ class AgencyTC(unittest.TestCase):
         [testswipe]
         alias = 1                    # first alias: OK
         cat = 'fake'           
-        agent = 'agency.agents.testing.swipe'
+        agent = 'evasion.agency.agents.testing.swipe'
         interface = 127.0.0.1
         port = 8810
 
         [magtek]
         alias = 1                   # Duplicate alias!
         cat = 'swipe'           
-        agent = 'agency.agents.testing.fake'     
+        agent = 'evasion.agency.agents.testing.fake'     
         
         """
 
