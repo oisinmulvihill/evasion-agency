@@ -29,13 +29,8 @@ TestSuite = 'evasion.agency.tests'
 needed = [
     'Mako',
     'configobj',
-    'pydispatcher',
     'evasion-messenger',
 ]
-
-import sys
-if not sys.platform.startswith('win'):
-    needed.append('twisted')
     
 
 # Include everything under agency. I needed to add a __init__.py
