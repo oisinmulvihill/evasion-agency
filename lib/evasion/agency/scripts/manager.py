@@ -147,7 +147,7 @@ def run(app=appmain):
         agency.shutdown()
         exit()
         
-    finally:
+    except:
         agency.shutdown()
 
 #

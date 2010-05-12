@@ -11,7 +11,7 @@ from setuptools import setup, find_packages
 
 Name='evasion-agency'
 ProjecUrl="" #""
-Version='1.0.0'
+Version='1.0.1'
 Author='Oisin Mulvihill'
 AuthorEmail='oisinmulvihill at gmail dot com'
 Maintainer=' Oisin Mulvihill'
