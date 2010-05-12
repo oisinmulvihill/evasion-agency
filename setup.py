@@ -18,11 +18,7 @@ Maintainer=' Oisin Mulvihill'
 Summary='This provides the hardware abstraction layer communicated with via the event system'
 License=''
 ShortDescription=Summary
-
-# Recover the ReStructuredText docs:
-fd = file("lib/evasion/agency/docs/agency.stx")
-Description=fd.read()
-fd.close()
+Description=Summary
 
 TestSuite = 'evasion.agency.tests'
 
