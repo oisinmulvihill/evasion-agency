@@ -16,7 +16,7 @@ Author='Oisin Mulvihill'
 AuthorEmail='oisinmulvihill at gmail dot com'
 Maintainer=' Oisin Mulvihill'
 Summary='This provides the hardware abstraction layer communicated with via the event system'
-License=''
+License='Evasion Project CDDL License'
 ShortDescription=Summary
 Description=Summary
 
