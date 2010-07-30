@@ -7,7 +7,13 @@ Oisin Mulvihill
 2008-12-23
 
 """
-from setuptools import setup, find_packages
+try:
+    from setuptools import setup, find_packages
+except ImportError:
+    from ez_setup import use_setuptools
+    use_setuptools()
+    from setuptools import setup, find_packages
+
 
 Name='evasion-agency'
 ProjecUrl="" #""
