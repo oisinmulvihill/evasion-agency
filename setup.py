@@ -11,7 +11,7 @@ from setuptools import setup, find_packages
 
 Name='evasion-agency'
 ProjecUrl="" #""
-Version='1.0.1'
+Version='1.0.2'
 Author='Oisin Mulvihill'
 AuthorEmail='oisinmulvihill at gmail dot com'
 Maintainer=' Oisin Mulvihill'
@@ -52,6 +52,9 @@ PackageData = {
 
 # Make exe versions of the scripts:
 EntryPoints = {
+    'console_scripts': [
+        'manager = evasion.agency.scripts.manager:main',
+    ]
 }
 
 
