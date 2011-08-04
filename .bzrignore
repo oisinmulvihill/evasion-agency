@@ -1,8 +1,0 @@
-lib/evasion_agency.egg-info
-temp/
-*.log
-*.cfg
-*.ini
-dist
-build
-*.egg
