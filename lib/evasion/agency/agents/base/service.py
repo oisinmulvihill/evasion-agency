@@ -1,5 +1,5 @@
 """
-:mod:`agency.agents.base.service` 
+:mod:`agency.agents.base.service`
 ==================================
 
 .. module:: 'agency.agents.base.service'
@@ -13,7 +13,7 @@
 .. autoclass:: agency.agents.base.service.FakeViewpointDevice
    :members:
    :undoc-members:
-   
+
 """
 import uuid
 import time
@@ -39,15 +39,15 @@ class ControlFrameRequest(SocketServer.StreamRequestHandler):
         """
         self.rfile = request, self.wfile = response
         """
-        
+
 
 class StoppableTCPServer(SocketServer.TCPServer):
-    """Handle requests but check for the exit flag setting periodically.    
+    """Handle requests but check for the exit flag setting periodically.
     """
     log = logging.getLogger('evasion.agency.agents.base.service.StoppableTCPServer')
 
     exitTime = False
-    
+
     allow_reuse_address = True
 
     def __init__(self, serveraddress, ControlFrameRequest):
@@ -61,7 +61,7 @@ class StoppableTCPServer(SocketServer.TCPServer):
         SocketServer.TCPServer.server_bind(self)
         self.socket.settimeout(1)
         self.run = True
-        
+
     def get_request(self):
         """Handle a request/timeout and check the exit flag.
         """
@@ -80,16 +80,16 @@ class StoppableTCPServer(SocketServer.TCPServer):
 
 class StoppableXMLRPCServer(SocketServer.ThreadingMixIn, SimpleXMLRPCServer.SimpleXMLRPCServer):
     """Handle requests but check for the exit flag setting periodically.
-    
+
     This snippet is based example from:
-    
+
         http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/425210
-    
+
     """
     log = logging.getLogger('evasion.agency.base.service.StoppableXMLRPCServer')
 
     exitTime = False
-    
+
     allow_reuse_address = True
 
     def stop(self):
@@ -100,7 +100,7 @@ class StoppableXMLRPCServer(SocketServer.ThreadingMixIn, SimpleXMLRPCServer.Simp
         SimpleXMLRPCServer.SimpleXMLRPCServer.server_bind(self)
         self.socket.settimeout(1)
         self.run = True
-        
+
     def get_request(self):
         """Handle a request/timeout and check the exit flag.
         """
@@ -119,9 +119,9 @@ class StoppableXMLRPCServer(SocketServer.ThreadingMixIn, SimpleXMLRPCServer.Simp
 
 class ServiceDevice(agent.Base):
     """An XML-RPC interface agent.
-    
+
     Valid example configuration for this agent is:
-    
+
         [myservice_name]
         cat = service
         agent = <my code>.<myservice>
@@ -130,12 +130,12 @@ class ServiceDevice(agent.Base):
 
     The interface and port are where to start the XML-RPC server on.
     Once its up and running then you can access the interface at:
-    
+
         'http://interface:port/'
-                    
+
     """
     log = logging.getLogger('evasion.agency.base.service.ServiceDevice')
-    
+
     def __init__(self):
         self.config = None
 
@@ -153,11 +153,11 @@ class ServiceDevice(agent.Base):
 
         In this example, the ping() method will then be available when
         the service is started.
-        
+
         """
         raise NotImplemented("Please implement this method!")
 
-                
+
     def setUp(self, config):
         """Create the XML-RPC services. It won't be started until
         the start() method is called.
@@ -169,22 +169,22 @@ class ServiceDevice(agent.Base):
             try:
                 self.log.info("Creating service...")
                 self.server = StoppableXMLRPCServer((interface, port))
-                
+
             except socket.error, e:
                 if e[0] == 48 or e[1] == 'Address already in use':
                     self.log.error("Address (%s, %s) in use. Retrying..." % (interface, port))
                     pass
-            
+
             except Exception, e:
                 self.log.exception("Service creation failed - ")
                 break
-                
+
             else:
                 self.log.info("Service created OK.")
                 break
-                
+
             time.sleep(1)
-            
+
         self.server.register_instance(self.registerInterface())
 
 
@@ -205,14 +205,13 @@ class ServiceDevice(agent.Base):
                 self.server.serve_forever()
             except TypeError,e:
                 # caused by ctrl-c. Its ok
-                pass                
+                pass
 
         thread.start_new_thread(_start, (0,))
-        
+
 
     def stop(self):
         """Stop xmlrpc interface.
         """
         if self.server:
             self.server.stop()
-

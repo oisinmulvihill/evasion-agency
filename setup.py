@@ -16,8 +16,8 @@ except ImportError:
 
 
 Name='evasion-agency'
-ProjecUrl="" #""
-Version='1.0.2'
+ProjecUrl="http://github.com/oisinmulvihill/evasion-agency/tarball/master#egg=evasion_agency"
+Version='1.1.0dev'
 Author='Oisin Mulvihill'
 AuthorEmail='oisinmulvihill at gmail dot com'
 Maintainer=' Oisin Mulvihill'
@@ -33,7 +33,7 @@ needed = [
     'configobj',
     'evasion-messenger',
 ]
-    
+
 
 # Include everything under agency. I needed to add a __init__.py
 # to each directory inside agency I did this using the following
@@ -65,7 +65,7 @@ EntryPoints = {
 
 
 setup(
-#    url=ProjecUrl,
+    url=ProjecUrl,
     zip_safe=False,
     name=Name,
     version=Version,
