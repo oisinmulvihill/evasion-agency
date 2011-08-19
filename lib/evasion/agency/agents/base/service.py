@@ -17,18 +17,23 @@
 """
 import uuid
 import time
+import json
+import pprint
 import socket
 import thread
+import urllib2
 import logging
+import urlparse
 import datetime
 import xmlrpclib
 import SocketServer
 import SimpleXMLRPCServer
 
-from pydispatch import dispatcher
-
 
 from evasion.agency import agent
+from pydispatch import dispatcher
+from evasion.agency.agents.base import service
+
 
 
 
@@ -78,7 +83,10 @@ class StoppableTCPServer(SocketServer.TCPServer):
 
 
 
-class StoppableXMLRPCServer(SocketServer.ThreadingMixIn, SimpleXMLRPCServer.SimpleXMLRPCServer):
+class StoppableXMLRPCServer(
+        SocketServer.ThreadingMixIn,
+        SimpleXMLRPCServer.SimpleXMLRPCServer
+    ):
     """Handle requests but check for the exit flag setting periodically.
 
     This snippet is based example from:
@@ -124,7 +132,7 @@ class ServiceDevice(agent.Base):
 
         [myservice_name]
         cat = service
-        agent = <my code>.<myservice>
+        agent = <your package with Agent class derived from ServiceDevice>
         interface = 127.0.0.1
         port = 8810
 
@@ -141,7 +149,7 @@ class ServiceDevice(agent.Base):
 
 
     def registerInterface(self):
-        """Called to register a class instances who's members form the XML-RPC interace.
+        """Register an instances who's members form the XML-RPC interace.
 
         Example Returned:
 
@@ -172,8 +180,10 @@ class ServiceDevice(agent.Base):
 
             except socket.error, e:
                 if e[0] == 48 or e[1] == 'Address already in use':
-                    self.log.error("Address (%s, %s) in use. Retrying..." % (interface, port))
-                    pass
+                    self.log.error("Address (%s, %s) in use. Retrying..." % (
+                        interface,
+                        port
+                    ))
 
             except Exception, e:
                 self.log.exception("Service creation failed - ")
@@ -212,6 +222,166 @@ class ServiceDevice(agent.Base):
 
     def stop(self):
         """Stop xmlrpc interface.
+        """
+        if self.server:
+            self.server.stop()
+
+
+
+class WebServerAgent(agent.Base, SimpleHTTPServer.SimpleHTTPRequestHandler):
+    """A simple stoppable HTTP Web server agent to base REST agents on.
+
+        [rest_service_agent]
+        #disabled = 'yes'
+        cat = service
+        agent = <your package with Agent class derived from WebServerAgent>
+
+        # Where to to bind the server to:
+        interface = 0.0.0.0
+        port = 39475
+
+    """
+
+    def setUp(self, config):
+        """Create the services. It won't be started until
+        the start() method is called.
+        """
+        self.config = config
+        interface = config.get('interface')
+        port = int(config.get('port'))
+
+        class ToSelfRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+            """I need to provide a class to handle a request not an instance.
+            This achieves this and routes to calls to the Agent do_* methods
+            instead, passing in the re
+            """
+            parent = self
+            def do_GET(self):
+                self.parent.do_GET(self)
+            def do_POST(self):
+                self.parent.do_POST(self)
+            def do_PUT(self):
+                self.parent.do_PUT(self)
+            def do_DELETE(self):
+                self.parent.do_DELETE(self)
+
+        while True:
+            try:
+                self.log.info("Creating service...")
+                self.server = service.StoppableTCPServer(
+                    (interface, port),
+                    ToSelfRequestHandler
+                )
+
+            except socket.error, e:
+                if e[0] == 48 or e[1] == 'Address already in use':
+                    self.log.error("Address (%s, %s) in use. Retrying..." % (
+                        interface, port
+                    ))
+
+            except Exception, e:
+                self.log.exception("Service creation failed - ")
+                break
+
+            else:
+                self.log.info("Service created OK.")
+                break
+
+            time.sleep(1)
+
+
+    def tearDown(self):
+        """Stop the service.
+        """
+        self.log.info("stop: Stopping Web Service.")
+        self.stop()
+
+
+    def defaultResponseHandler(self, request_handler):
+        """A reference for how you can respond to a do_* request.
+
+        :param request_handler: An instance of SimpleHTTPRequestHandler.
+
+        """
+        self.log.debug("defaultResponseHandler: source {0} - {1}".format(
+            self.client_address,
+            self.path,
+        ))
+
+        try:
+            self.log.debug("defaultResponseHandler: recovering content")
+            length = int(request_handler.headers.getheader('content-length', 0))
+            self.log.debug("defaultResponseHandler: content length {}".format(
+                length
+            ))
+            data = request_handler.rfile.read(length)
+            self.log.debug("defaultResponseHandler Received:\n{}\n\n".format(
+                data
+            ))
+
+        except Exception as exc:
+            self.log.error(
+                "defaultResponseHandler ERROR: {0}/{1}({2})".format(
+                    type(self).__name__, type(exc).__name__, str(exc)
+                )
+            )
+            self.log.debug("defaultResponseHandler ERROR. Responding 500.")
+            request_handler.send_response(500, "Service Error :(")
+
+        else:
+            self.log.debug("defaultResponseHandler: Responding 200.")
+            request_handler.send_response(200, "OK")
+
+        finally:
+            request_handler.finish()
+
+
+    def do_GET(self, request_handler):
+        """Handle a GET request, override to implement.
+        """
+        self.log.info("do_GET: received request, responding.")
+        self.defaultResponseHandler(request_handler)
+
+
+    def do_POST(self, request_handler):
+        """Handle a GET request, override to implement.
+        """
+        self.log.info("do_POST: received request, responding.")
+        self.defaultResponseHandler(request_handler)
+
+
+    def do_PUT(self, request_handler):
+        """Handle a PUT request, override to implement.
+        """
+        self.log.info("do_PUT: received request, responding.")
+        self.defaultResponseHandler(request_handler)
+
+
+    def do_DELETE(self, request_handler):
+        """Handle a DELETE request, override to implement.
+        """
+        self.log.info("do_DELETE: received request, responding.")
+        self.defaultResponseHandler(request_handler)
+
+
+    def start(self):
+        """Start HTTP Web Server.
+        """
+        def _start(data=0):
+            i = self.config.get('interface')
+            p = self.config.get('port')
+            self.log.info("Web Service URI 'http://%s:%s'" % (i,p))
+            try:
+                self.server.serve_forever()
+            except TypeError,e:
+                # caused by ctrl-c. Its ok
+                pass
+
+        thread.start_new_thread(_start, (0,))
+
+
+    def stop(self):
+        """Stop HTTP Web Server.
         """
         if self.server:
             self.server.stop()
