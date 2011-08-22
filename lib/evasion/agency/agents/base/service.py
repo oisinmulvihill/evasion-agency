@@ -27,12 +27,12 @@ import urlparse
 import datetime
 import xmlrpclib
 import SocketServer
+import SimpleHTTPServer
 import SimpleXMLRPCServer
 
 
 from evasion.agency import agent
 from pydispatch import dispatcher
-from evasion.agency.agents.base import service
 
 
 
@@ -268,7 +268,7 @@ class WebServerAgent(agent.Base, SimpleHTTPServer.SimpleHTTPRequestHandler):
         while True:
             try:
                 self.log.info("Creating service...")
-                self.server = service.StoppableTCPServer(
+                self.server = StoppableTCPServer(
                     (interface, port),
                     ToSelfRequestHandler
                 )
