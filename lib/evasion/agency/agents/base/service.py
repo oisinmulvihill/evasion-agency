@@ -304,9 +304,11 @@ class WebServerAgent(agent.Base, SimpleHTTPServer.SimpleHTTPRequestHandler):
 
         """
         self.log.debug("defaultResponseHandler: source {0} - {1}".format(
-            self.client_address,
-            self.path,
+            request_handler.client_address,
+            request_handler.path,
         ))
+
+        data = ""
 
         try:
             self.log.debug("defaultResponseHandler: recovering content")
@@ -314,10 +316,10 @@ class WebServerAgent(agent.Base, SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.log.debug("defaultResponseHandler: content length {}".format(
                 length
             ))
-            data = request_handler.rfile.read(length)
-            self.log.debug("defaultResponseHandler Received:\n{}\n\n".format(
-                data
-            ))
+            if length:
+                data = request_handler.rfile.read(length)
+            else:
+                self.log.info("defaultResponseHandler: Content length header not set or 0! No data recovered.")
 
         except Exception as exc:
             self.log.error(
@@ -334,6 +336,8 @@ class WebServerAgent(agent.Base, SimpleHTTPServer.SimpleHTTPRequestHandler):
 
         finally:
             request_handler.finish()
+
+        return data
 
 
     def do_GET(self, request_handler):
