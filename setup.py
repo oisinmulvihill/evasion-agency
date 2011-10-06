@@ -31,7 +31,6 @@ TestSuite = 'evasion.agency.tests'
 needed = [
     'Mako',
     'configobj',
-    'evasion-messenger',
 ]
 
 
