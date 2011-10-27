@@ -31,6 +31,7 @@ TestSuite = 'evasion.agency.tests'
 needed = [
     'Mako',
     'configobj',
+    'pydispatcher',
 ]
 
 
