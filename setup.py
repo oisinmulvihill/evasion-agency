@@ -17,7 +17,7 @@ except ImportError:
 
 Name='evasion-agency'
 ProjecUrl="http://github.com/oisinmulvihill/evasion-agency/tarball/master#egg=evasion_agency"
-Version='1.1.2'
+Version='1.1.3'
 Author='Oisin Mulvihill'
 AuthorEmail='oisinmulvihill at gmail dot com'
 Maintainer=' Oisin Mulvihill'
