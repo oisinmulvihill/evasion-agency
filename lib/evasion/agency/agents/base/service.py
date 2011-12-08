@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 :mod:`agency.agents.base.service`
 ==================================
@@ -15,24 +16,16 @@
    :undoc-members:
 
 """
-import uuid
 import time
-import json
-import pprint
 import socket
 import thread
-import urllib2
 import logging
-import urlparse
-import datetime
-import xmlrpclib
 import SocketServer
 import SimpleHTTPServer
 import SimpleXMLRPCServer
 
 
 from evasion.agency import agent
-from pydispatch import dispatcher
 
 
 
@@ -213,7 +206,7 @@ class ServiceDevice(agent.Base):
             self.log.info("XML-RPC Service URI 'http://%s:%s'" % (i,p))
             try:
                 self.server.serve_forever()
-            except TypeError,e:
+            except TypeError:
                 # caused by ctrl-c. Its ok
                 pass
 
@@ -377,7 +370,7 @@ class WebServerAgent(agent.Base, SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.log.info("Web Service URI 'http://%s:%s'" % (i,p))
             try:
                 self.server.serve_forever()
-            except TypeError,e:
+            except TypeError:
                 # caused by ctrl-c. Its ok
                 pass
 

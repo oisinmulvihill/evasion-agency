@@ -8,14 +8,14 @@ Evasion Project Device Access
 Introduction
 ============
 
-This module is the beginnings of the device abstract need so that device access code isn't tightly 
-bound into applications. 
+This module is the beginnings of the device abstract need so that device access code isn't tightly
+bound into applications.
 
 
 Drivers
 =======
 
-This is a collection of packages used to control specific hardware and third party software 
+This is a collection of packages used to control specific hardware and third party software
 applications.
 
 

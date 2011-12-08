@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 """
-:mod:`agency.agents.testing.fake` 
+:mod:`agency.agents.testing.fake`
 ==================================
 
 .. module:: 'agency.agents.testing.fake'
@@ -22,7 +23,7 @@ class Agent(agent.Base):
     physical agents.
 
     Valid example configuration for this fake agent is::
-    
+
         [testswipe]
         cat = 'swipe'
         agent = 'agency.testing.fake'
@@ -30,20 +31,20 @@ class Agent(agent.Base):
     If you set the parent object that implements the agent.Base
     methods, then you get callbacks for each time the methods
     are called.
-    
+
     """
     def __init__(self):
         self.config = None
         self._parent = None
-        
+
     def setParent(self, parent):
         self._parent = parent
 #        print "setting parent: ", self._parent
-    
+
     def getParent(self):
         # check its been set up before its used!
         return self._parent
-    
+
     def setUp(self, config):
         if self._parent:
             self._parent.setUp(config)

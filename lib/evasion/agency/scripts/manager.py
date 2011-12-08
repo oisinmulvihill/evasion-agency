@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 :mod:`agency.scripts.manager` -- This supervises then agents under its control.
 =================================================================================
@@ -7,7 +8,7 @@
    :synopsis: This supervises then agents under its control.
 .. moduleauthor:: Oisin Mulvihill <oisin.mulvihill@gmail.com>
 
-This is where the main function to run the agency lives. This will generally be run and managed by 
+This is where the main function to run the agency lives. This will generally be run and managed by
 the director.
 
 .. autofunction:: agency.scripts.manager.appmain(isExit)
@@ -16,7 +17,7 @@ the director.
 .. autofunction:: agency.scripts.manager.run(app=appmain)
 .. autofunction:: agency.scripts.manager.create_config(cfg_data)
 .. autofunction:: agency.scripts.manager.main()
-   
+
 
 """
 import os
@@ -41,7 +42,7 @@ def appmain(isExit):
     isExit:
         This is a function that will return true
         when its time to exit.
-        
+
     """
     def event_watch(signal, sender, **data):
         """Show the event we've received so far."""
@@ -71,12 +72,12 @@ def setup(logconfig, managerconfig):
         The device configuration to load, setup and start running.
 
         The configuration for stomp, locale, etc setup.
-    
+
     """
     # Set up python logging if a config file is given:
     if os.path.isfile(logconfig):
         logging.config.fileConfig(logconfig)
-        
+
     else:
         # No log configuration file given or it has been overidden
         # by the user, just print out to console instead:
@@ -91,7 +92,7 @@ def setup(logconfig, managerconfig):
     # Check the requried config files exits:
     check_exits = [
         managerconfig,
-    ]    
+    ]
     for f in check_exits:
         if not os.path.isfile(f):
             raise SystemError("The file '%s' was not found!" % f)
@@ -99,24 +100,23 @@ def setup(logconfig, managerconfig):
     # Set up manager details from its config. Stomp, etc...
     import configobj
     dm_cfg = configobj.ConfigObj(infile=managerconfig)
-        
-    # Set up the messenger protocols where using:            
+
+    # Set up the messenger protocols where using:
     import messenger
 
     stomp_cfg = dict(
         host = dm_cfg['Messenger'].get("host"),
         port = dm_cfg['Messenger'].get("port"),
         username = dm_cfg['Messenger'].get("username"),
-        password = dm_cfg['Messenger'].get("password"), 
-        channel = dm_cfg['Messenger'].get("channel"), 
+        password = dm_cfg['Messenger'].get("password"),
+        channel = dm_cfg['Messenger'].get("channel"),
     )
     stomp_cfg['port'] = int(stomp_cfg['port'])
     messenger.stompprotocol.setup(stomp_cfg)
 
     # Load the device/hardware configuration file, set it up
     # and start the devices running ready for use:
-    import agency
-    from agency import manager
+    from evasion.agency import manager
 
     manager.load(dm_cfg)
     manager.setUp()
@@ -126,10 +126,10 @@ def setup(logconfig, managerconfig):
 def exit():
     """Called by the service to stop the device manager and exit.
     """
-    import messenger
+    from evasion import messenger
     messenger.quit()
     time.sleep(1)
-        
+
 
 def run(app=appmain):
     """Called to run a set up manager running twisted in the main loop
@@ -137,16 +137,16 @@ def run(app=appmain):
     """
     import messenger
     import agency
- 
-    # Messaging system needs to run as the main loop the program will run 
+
+    # Messaging system needs to run as the main loop the program will run
     # inside appmain(), which is run in a different thread.
     try:
         messenger.run(app)
-        
-    except KeyboardInterrupt, e:
+
+    except KeyboardInterrupt:
         agency.shutdown()
         exit()
-        
+
     except:
         agency.shutdown()
 
@@ -175,18 +175,18 @@ def create_config(cfg_data):
     fd = open(DEFAULT_CONFIG_NAME, 'w')
     fd.write(dcfg_data)
     fd.close()
-    
+
     fd = open(DEFAULT_MANAGER_CONFIG_NAME, 'w')
     fd.write(mcfg_data)
     fd.close()
-    
+
     fd = open(DEFAULT_LOGCONFIG_NAME, 'w')
     fd.write(Template(logcfg_data).render(**cfg_data))
     fd.close()
 
     print("Success, '%s', '%s' and '%s' created ok." % (DEFAULT_CONFIG_NAME, DEFAULT_MANAGER_CONFIG_NAME, DEFAULT_LOGCONFIG_NAME))
 
-        
+
 def main():
     """Main program for commandline non-service manager.
     """
@@ -214,12 +214,12 @@ def main():
             managerconfig=options.manager_config,
         )
         run(appmain)
-    
-    
+
+
 if __name__ == "__main__":
     main()
-    
-    
-    
+
+
+
 
 

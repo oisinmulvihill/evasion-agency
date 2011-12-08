@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 :mod:`manager` -- This supervises then agents under its control.
 =================================================================
@@ -61,7 +62,7 @@ class Manager(object):
         # Close and free any resources we may be using and clear out state.
         try:
             self.tearDown()
-        except ManagerError,e:
+        except ManagerError:
             pass
         self._agents = {}
 

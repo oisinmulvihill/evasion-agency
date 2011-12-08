@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 :mod:`agency.agents.testing` -- These are agents used for testing purposes or as usage examples
 =================================================================================================
