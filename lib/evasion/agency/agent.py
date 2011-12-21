@@ -23,7 +23,8 @@ import logging
 class Base(object):
     """Base class agent entry.
     """
-    _log = logging.getLogger("evasion.agency.agent.Base")
+    def __init__(self):
+        self.log = logging.getLogger("evasion.agency.agent.Base")
 
 
     def setUp(self, config):

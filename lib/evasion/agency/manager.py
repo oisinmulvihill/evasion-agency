@@ -171,6 +171,8 @@ class Manager(object):
                 continue
             try:
                 a.mod.setUp(a.config)
+            except (SystemExit, KeyboardInterrupt):
+                raise
             except:
                 self.log.exception("%s setUp error: " % a)
                 sys.stderr.write("%s setUp error: %s" % (a, self.formatError()))
@@ -196,6 +198,8 @@ class Manager(object):
                 continue
             try:
                 a.mod.tearDown()
+            except (SystemExit, KeyboardInterrupt):
+                raise
             except:
                 self.log.exception("%s tearDown error: " % a)
                 sys.stderr.write("%s tearDown error: %s" % (a, self.formatError()))
@@ -218,6 +222,8 @@ class Manager(object):
                 continue
             try:
                 a.mod.start()
+            except (SystemExit, KeyboardInterrupt):
+                raise
             except:
                 self.log.exception("%s start error: " % a)
                 sys.stderr.write("%s start error: %s" % (a, self.formatError()))
@@ -240,6 +246,8 @@ class Manager(object):
                 continue
             try:
                 a.mod.stop()
+            except (SystemExit, KeyboardInterrupt):
+                raise
             except:
                 self.log.exception("%s stop error: " % a)
                 sys.stderr.write("%s stop error: %s" % (a, self.formatError()))

@@ -1,7 +1,0 @@
-#
-# A minial example of an agent configuration.
-#
-
-[test]
-cat = service
-agent = agency.agents.testing.fake

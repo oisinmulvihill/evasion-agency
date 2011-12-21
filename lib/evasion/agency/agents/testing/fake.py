@@ -14,6 +14,8 @@ This agent is used to test the agent manager and has no other functional use.
 
 
 """
+import logging
+
 from evasion.agency import agent
 
 
@@ -34,6 +36,7 @@ class Agent(agent.Base):
 
     """
     def __init__(self):
+        self.log = logging.getLogger("evasion.agency.agents.testing.fake.Agent")
         self.config = None
         self._parent = None
 

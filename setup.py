@@ -16,7 +16,7 @@ except ImportError:
 
 
 Name='evasion-agency'
-ProjecUrl="http://github.com/oisinmulvihill/evasion-agency/tarball/master#egg=evasion_agency"
+ProjectUrl="http://github.com/oisinmulvihill/evasion-agency/tarball/master#egg=evasion_agency"
 Version='1.1.4'
 Author='Oisin Mulvihill'
 AuthorEmail='oisinmulvihill at gmail dot com'
@@ -26,7 +26,7 @@ License='Evasion Project CDDL License'
 ShortDescription=Summary
 Description=Summary
 
-TestSuite = 'evasion.agency.tests'
+TestSuite = 'nose.collector'
 
 needed = [
     'Mako',
@@ -34,6 +34,14 @@ needed = [
     'pydispatcher',
 ]
 
+SETUP_REQUIRES = [
+    'nose>=1.0',
+]
+
+TEST_REQUIRES = [
+    'nose>=1.0',
+#    'evasion-messenger',
+]
 
 # Include everything under agency. I needed to add a __init__.py
 # to each directory inside agency I did this using the following
@@ -57,15 +65,11 @@ PackageData = {
 }
 
 # Make exe versions of the scripts:
-EntryPoints = {
-    'console_scripts': [
-        'manager = evasion.agency.scripts.manager:main',
-    ]
-}
+EntryPoints = {}
 
 
 setup(
-    url=ProjecUrl,
+    url=ProjectUrl,
     zip_safe=False,
     name=Name,
     version=Version,
@@ -76,6 +80,8 @@ setup(
     license=License,
     test_suite=TestSuite,
     scripts=ProjectScripts,
+    setup_requires=SETUP_REQUIRES,
+    tests_require=TEST_REQUIRES,
     install_requires=needed,
     packages=find_packages('lib'),
     package_data=PackageData,
