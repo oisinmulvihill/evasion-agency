@@ -3,11 +3,9 @@
 """
 import unittest
 
-
 from evasion import agency
 from evasion.director import config
 from evasion.director.testing import director_setup
-
 
 
 class AgencyTC(unittest.TestCase):
@@ -15,7 +13,6 @@ class AgencyTC(unittest.TestCase):
     def setUp(self):
         # unittesting reset:
         agency.node._reset()
-
 
     def testagencyNodes(self):
         """Test the agent node id generation.

@@ -43,16 +43,28 @@ class Manager(object):
     all agent nodes under our care.
 
     """
-    def __init__(self):
+    def __init__(self, eat_agent_exceptions=False):
+        """
+
+        :param eat_agent_exceptions: True | False (default).
+
+        If this is True then all attempts will be made to keep going in
+        setUp, tearDown, start and stop. All exceptions will be logged to
+        logging and to stderr.
+
+        """
         self._agents = {}
+        self.eat_agent_exceptions = eat_agent_exceptions
         self.log = logging.getLogger('evasion.agency.manager.Manager')
 
+    def keep_going_on_exceptions(self):
+        """Return the state of eat_agent_exceptions True | False."""
+        return self.eat_agent_exceptions
 
     def getAgentCount(self):
         return len(self._agents.keys())
 
     agents = property(getAgentCount)
-
 
     def shutdown(self):
         """Used to tearDown and reset the internal state of the agent
@@ -65,7 +77,6 @@ class Manager(object):
         except ManagerError:
             pass
         self._agents = {}
-
 
     def agent(self, alias, absolute=False):
         """Called to recover a specific agent node.
@@ -89,12 +100,10 @@ class Manager(object):
             full_alias = '/agent/%s' % alias
 
         #print "looking for: ", full_alias
-
-        if not self._agents.has_key(full_alias):
+        if not full_alias in self._agents:
             raise ManagerError("The agent node alias '%s' was not found!" % full_alias)
 
         return self._agents[full_alias]
-
 
     def load(self):
         """Load the agent modules into the system wide configuration.
@@ -145,14 +154,12 @@ class Manager(object):
 
         return c.agency.agents
 
-
     def formatError(self):
         """Return a string representing the last traceback.
         """
         exception, instance, tb = traceback.sys.exc_info()
         error = "".join(traceback.format_tb(tb))
         return error
-
 
     def setUp(self):
         """Called to initialise all agents in our care.
@@ -176,7 +183,9 @@ class Manager(object):
             except:
                 self.log.exception("%s setUp error: " % a)
                 sys.stderr.write("%s setUp error: %s" % (a, self.formatError()))
-
+                if not self.keep_going_on_exceptions():
+                    # Stop!
+                    raise
 
     def tearDown(self):
         """Called to tearDown all agents in our care.
@@ -203,7 +212,9 @@ class Manager(object):
             except:
                 self.log.exception("%s tearDown error: " % a)
                 sys.stderr.write("%s tearDown error: %s" % (a, self.formatError()))
-
+                if not self.keep_going_on_exceptions():
+                    # Stop!
+                    raise
 
     def start(self):
         """Start all agents under our management
@@ -227,7 +238,9 @@ class Manager(object):
             except:
                 self.log.exception("%s start error: " % a)
                 sys.stderr.write("%s start error: %s" % (a, self.formatError()))
-
+                if not self.keep_going_on_exceptions():
+                    # Stop!
+                    raise
 
     def stop(self):
         """Start all agents under our management
@@ -251,3 +264,6 @@ class Manager(object):
             except:
                 self.log.exception("%s stop error: " % a)
                 sys.stderr.write("%s stop error: %s" % (a, self.formatError()))
+                if not self.keep_going_on_exceptions():
+                    # Stop!
+                    raise
