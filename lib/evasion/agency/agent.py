@@ -26,13 +26,11 @@ class Base(object):
     def __init__(self):
         self.log = logging.getLogger("evasion.agency.agent.Base")
 
-
     def setUp(self, config):
         """Called to set up the agent and subscribe for any events
         it may be interested in.
 
         """
-
 
     def tearDown(self):
         """Called to cleanup and release any resources the agent
@@ -43,7 +41,6 @@ class Base(object):
 
         """
 
-
     def start(self):
         """Called to start any processing the agent may need to do.
 
@@ -52,13 +49,9 @@ class Base(object):
 
         """
 
-
     def stop(self):
         """Called to stop any processing the agent may be doing.
 
         The start function may be called to resume operation.
 
         """
-
-
-

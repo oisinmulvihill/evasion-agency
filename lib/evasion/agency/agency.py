@@ -8,19 +8,20 @@ from evasion.director.config import ConfigError
 
 __all__ = ['AGENT_CATEGORIES', 'Nodes', 'shutdown', 'node', 'manager']
 
+
 def get_log():
     return logging.getLogger('evasion.agency.agency')
 
 
 AGENT_CATEGORIES = {
-    'display' : 'This is the category for message output to some kind of physical display.',
-    'cashdrawer' : 'This is the category for cash drawer access.',
-    'printer' : 'This is the category for output to paper and other printed media.',
-    'sale' : 'This is the category for point of sale agents fit under to process card/chip and pin payments.',
-    'swipe' : 'This is the category for magnetic card swipe agents.',
-    'websale' : 'This is the category for web-based sale agents.',
-    'service' : 'This represent some web or other type of networked service',
-    'general' : 'This represents a catch all category',
+    'display': 'This is the category for message output to some kind of physical display.',
+    'cashdrawer': 'This is the category for cash drawer access.',
+    'printer': 'This is the category for output to paper and other printed media.',
+    'sale': 'This is the category for point of sale agents fit under to process card/chip and pin payments.',
+    'swipe': 'This is the category for magnetic card swipe agents.',
+    'websale': 'This is the category for web-based sale agents.',
+    'service': 'This represent some web or other type of networked service',
+    'general': 'This represents a catch all category',
 }
 
 
@@ -31,9 +32,8 @@ class Nodes(object):
     """
     def __init__(self):
         self.counters = {}
-        self._aliasGen = None # setup by reset.
+        self._aliasGen = None  # setup by reset.
         self._reset()
-
 
     def _reset(self):
         """Used in unittesting to reset the internal counts.
@@ -42,7 +42,6 @@ class Nodes(object):
 
         for cat in AGENT_CATEGORIES:
             self.counters[cat] = 0
-
 
     def add(self, cat, cat_name, alias=None):
         """Called to generate a node_id and alias_id for the given class recovered
@@ -91,7 +90,6 @@ class Nodes(object):
 
         return node_id, alias_id
 
-
     def get(self, cat):
         """Called to return the current count for the allocated node ids.
 
@@ -118,4 +116,3 @@ def shutdown():
     """Shutdown the agent manager, stopping and cleaning up all agents we manager.
     """
     manager.shutdown()
-

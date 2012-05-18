@@ -14,4 +14,3 @@ def log_init(level):
     hdlr.setFormatter(formatter)
     log.addHandler(hdlr)
     log.setLevel(level)
-
