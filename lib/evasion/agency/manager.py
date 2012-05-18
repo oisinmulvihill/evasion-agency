@@ -53,9 +53,9 @@ class Manager(object):
         logging and to stderr.
 
         """
+        self.log = logging.getLogger('evasion.agency.manager.Manager')
         self._agents = {}
         self.eat_agent_exceptions = eat_agent_exceptions
-        self.log = logging.getLogger('evasion.agency.manager.Manager')
 
     def keep_going_on_exceptions(self):
         """Return the state of eat_agent_exceptions True | False."""
