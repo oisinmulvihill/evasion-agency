@@ -1,11 +1,4 @@
-EvasionProject code documentation
----------------------------------
+The evasion-agency has been merged with the evasion-director. The evasion.agency namespace is now provided by the evasion-director egg / source code.
 
-  * http://www.evasionproject.com/apidocs/
-
-EvasionProject Wiki
--------------------
-
-  * http://www.evasionproject.com/
-
+The last version of the evasion-agency egg was "1.1.5".
 
